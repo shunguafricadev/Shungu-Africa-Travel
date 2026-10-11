@@ -60,7 +60,7 @@ function clean(value: unknown, maxLength: number) {
 }
 
 function reference() {
-  return `TAT-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
+  return `SAT-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
 }
 
 function isTripItem(value: unknown): value is TripRequestItem {

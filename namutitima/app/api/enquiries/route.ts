@@ -38,7 +38,7 @@ type EnquiryRequest = {
 };
 
 function generateReference() {
-  return `TAT-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
+  return `SAT-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
 }
 
 function cleanString(value: unknown, maxLength: number) {
