@@ -68,21 +68,13 @@ export function TravellerTestimonial() {
         <figure className="relative z-10 mx-auto max-w-4xl">
           <blockquote className="text-lg leading-8 text-white sm:text-xl sm:leading-9">
             <p>
-              “I stayed here with a large group of friends and it was the best
-              holiday experience I have ever had. Everything was absolutely
-              perfect, particularly the rooms (with private plunge pools and
-              bigger than king beds), food and guided drives. The staff could
-              not have been more accommodating and the attention to detail was
-              next level. The guides were phenomenal! So knowledgeable and
-              dedicated to making our safari experience the best it could be,
-              often continuing longer to ensure we saw as many animals as
-              possible.”
+              "From the moment we arrived, everything exceeded our expectations. The property was beautiful, the accommodations were incredibly comfortable, and every meal was a highlight. What really made the experience special was the outstanding hospitality and the team’s genuine passion for what they do. Our safari guides brought the African wilderness to life with their knowledge, enthusiasm, and ability to find incredible wildlife. Every day offered something new and memorable, and the entire experience felt thoughtfully planned from start to finish. It was the perfect combination of luxury, adventure, and relaxation. I would absolutely recommend this experience to anyone looking for a truly memorable African getaway."
             </p>
           </blockquote>
           <figcaption className="mt-8 text-sm font-semibold uppercase tracking-[0.16em] text-white">
-            Georgia S
+            Emily R.
             <span className="mt-2 block text-xs font-normal tracking-[0.12em] text-white/75">
-              South Africa
+              United States
             </span>
           </figcaption>
         </figure>
