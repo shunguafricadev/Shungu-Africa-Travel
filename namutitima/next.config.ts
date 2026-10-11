@@ -49,7 +49,7 @@ const nextConfig: NextConfig = {
           {
             key: "Content-Security-Policy",
             value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://*.supabase.co; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'",
+              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://elfsightcdn.com https://*.elfsightcdn.com https://*.elfsight.com https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://*.elfsight.com https://*.elfsightcdn.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://*.elfsight.com https://*.elfsightcdn.com https://vitals.vercel-insights.com; frame-src https://www.google.com https://maps.google.com https://*.elfsight.com https://*.elfsightcdn.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'",
           },
           {
             key: "Permissions-Policy",

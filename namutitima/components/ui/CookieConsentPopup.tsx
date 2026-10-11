@@ -1,27 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import { startTransition, useEffect, useState } from "react";
 import { CookieToggle } from "@/components/ui/CookieToggle";
 import { useDialogAccessibility } from "@/components/ui/useDialogAccessibility";
-
-const COOKIE_PREFERENCES_KEY = "travel-asambe-cookie-preferences";
-
-type CookiePreferences = {
-  analytics: boolean;
-  preferences: boolean;
-  marketing: boolean;
-};
-
-const defaultPreferences: CookiePreferences = {
-  analytics: false,
-  preferences: false,
-  marketing: false,
-};
+import {
+  defaultPrivacyPreferences,
+  parsePrivacyPreferences,
+  PRIVACY_PREFERENCES_KEY,
+  type PrivacyPreferences,
+} from "@/lib/privacy/preferences";
 
 export default function CookieConsentPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const [isManaging, setIsManaging] = useState(false);
-  const [preferences, setPreferences] = useState(defaultPreferences);
+  const [preferences, setPreferences] = useState(defaultPrivacyPreferences);
   const settingsDialogRef = useDialogAccessibility<HTMLDivElement>(
     isOpen && isManaging,
     () => {
@@ -31,15 +24,11 @@ export default function CookieConsentPopup() {
   );
 
   useEffect(() => {
-    const savedPreferences = window.localStorage.getItem(COOKIE_PREFERENCES_KEY);
+    const savedPreferences = window.localStorage.getItem(PRIVACY_PREFERENCES_KEY);
 
     if (savedPreferences) {
-      try {
-        const saved = { ...defaultPreferences, ...JSON.parse(savedPreferences) };
-        startTransition(() => setPreferences(saved));
-      } catch {
-        window.localStorage.removeItem(COOKIE_PREFERENCES_KEY);
-      }
+      const saved = parsePrivacyPreferences(savedPreferences);
+      startTransition(() => setPreferences(saved));
     } else {
       startTransition(() => setIsOpen(true));
     }
@@ -49,18 +38,46 @@ export default function CookieConsentPopup() {
       setIsManaging(true);
     }
 
+    function handleStorageChange(event: StorageEvent) {
+      if (event.key === PRIVACY_PREFERENCES_KEY && event.newValue) {
+        setPreferences(parsePrivacyPreferences(event.newValue));
+      } else if (event.key === PRIVACY_PREFERENCES_KEY) {
+        setPreferences(defaultPrivacyPreferences);
+      }
+    }
+
     window.addEventListener("open-cookie-settings", openCookieSettings);
-    return () => window.removeEventListener("open-cookie-settings", openCookieSettings);
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("open-cookie-settings", openCookieSettings);
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
-  function savePreferences(nextPreferences: CookiePreferences) {
+  function savePreferences(nextPreferences: PrivacyPreferences) {
+    const previousPreferences = parsePrivacyPreferences(
+      window.localStorage.getItem(PRIVACY_PREFERENCES_KEY),
+    );
     window.localStorage.setItem(
-      COOKIE_PREFERENCES_KEY,
+      PRIVACY_PREFERENCES_KEY,
       JSON.stringify(nextPreferences),
     );
     setPreferences(nextPreferences);
+    window.dispatchEvent(
+      new CustomEvent("cookie-preferences-updated", {
+        detail: nextPreferences,
+      }),
+    );
     setIsOpen(false);
     setIsManaging(false);
+
+    if (
+      (previousPreferences.analytics && !nextPreferences.analytics) ||
+      (previousPreferences.whatsappChat && !nextPreferences.whatsappChat)
+    ) {
+      // Reload to tear down provider scripts and DOM portals that React cannot own.
+      window.location.reload();
+    }
   }
 
   if (!isOpen) {
@@ -76,38 +93,49 @@ export default function CookieConsentPopup() {
       >
         <div className="mx-auto flex max-w-7xl flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-3xl">
-            <p className="text-eyebrow font-medium uppercase tracking-[0.15em] text-brand">Your privacy</p>
-            <h2 id="cookie-consent-title" className="mt-2 text-2xl font-semibold tracking-tight text-neutral-900">
-              We use cookies
+            <p className="text-eyebrow font-medium tracking-[0.12em] text-brand">Your privacy</p>
+            <h2 id="cookie-consent-title" className="mt-2 text-xl font-semibold tracking-tight text-neutral-900">
+              Your privacy choices
             </h2>
             <p className="mt-2 text-sm leading-6 text-neutral-600">
-              Necessary cookies keep the site working. You can accept optional cookies or manage your choices.
+              Choose whether to enable optional maps, chat and site
+              measurement.{" "}
+              <Link
+                href="/privacy"
+                className="font-medium text-neutral-900 underline underline-offset-2"
+              >
+                Privacy Policy
+              </Link>
             </p>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <button
               type="button"
-              onClick={() => savePreferences(defaultPreferences)}
-              className="border border-neutral-300 px-5 py-3 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100"
+              onClick={() => savePreferences(defaultPrivacyPreferences)}
+              className="border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100"
             >
-              Reject optional
+              Essential only
             </button>
             <button
               type="button"
               onClick={() => setIsManaging(true)}
-              className="border border-neutral-900 px-5 py-3 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-900 hover:text-white"
+              className="border border-neutral-900 px-4 py-2 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-900 hover:text-white"
             >
               Manage preferences
             </button>
             <button
               type="button"
               onClick={() =>
-                savePreferences({ analytics: true, preferences: true, marketing: true })
+                savePreferences({
+                  googleMaps: true,
+                  analytics: true,
+                  whatsappChat: true,
+                })
               }
-              className="bg-brand px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-hover"
+              className="bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-hover"
             >
-              Accept all
+              Allow optional services
             </button>
           </div>
         </div>
@@ -138,7 +166,7 @@ export default function CookieConsentPopup() {
           <div>
             <p className="text-eyebrow font-medium uppercase tracking-[0.15em] text-brand">Your privacy</p>
             <h2 id="cookie-settings-title" className="mt-2 text-3xl font-semibold tracking-tight text-neutral-900">
-              Choose your cookie settings
+              Choose your privacy settings
             </h2>
           </div>
           <button type="button" onClick={() => { setIsOpen(false); setIsManaging(false); }} aria-label="Close cookie settings" className="text-2xl leading-none text-neutral-500 transition-colors hover:text-neutral-900">
@@ -147,21 +175,21 @@ export default function CookieConsentPopup() {
         </div>
 
         <p className="mt-4 text-sm leading-7 text-neutral-600">
-          Necessary cookies keep Shungu Africa Travel working. Optional cookies
-          can be enabled or disabled below.
+          Optional services stay off until enabled. See the Privacy Policy for
+          details.
         </p>
 
         <div className="mt-6 divide-y divide-neutral-200 border-y border-neutral-200">
-          <CookieChoice title="Necessary cookies" description="Required for core site functions, security, enquiry forms and your cookie choices." enabled disabled onChange={() => undefined} />
-          <CookieChoice title="Analytics cookies" description="Help us understand which pages and experiences are useful to visitors." enabled={preferences.analytics} onChange={(enabled) => setPreferences((current) => ({ ...current, analytics: enabled }))} />
-          <CookieChoice title="Preference cookies" description="Remember choices such as your cookie settings and display preferences." enabled={preferences.preferences} onChange={(enabled) => setPreferences((current) => ({ ...current, preferences: enabled }))} />
-          <CookieChoice title="Marketing cookies" description="Help measure campaigns and make future travel information more relevant." enabled={preferences.marketing} onChange={(enabled) => setPreferences((current) => ({ ...current, marketing: enabled }))} />
+          <CookieChoice title="Essential storage" description="Saves your trip and privacy choices on this device." enabled disabled onChange={() => undefined} />
+          <CookieChoice title="Google Maps" description="Displays destination maps." enabled={preferences.googleMaps} onChange={(enabled) => setPreferences((current) => ({ ...current, googleMaps: enabled }))} />
+          <CookieChoice title="WhatsApp chat" description="Enables the WhatsApp chat widget." enabled={preferences.whatsappChat} onChange={(enabled) => setPreferences((current) => ({ ...current, whatsappChat: enabled }))} />
+          <CookieChoice title="Analytics and performance" description="Measures visits and site performance." enabled={preferences.analytics} onChange={(enabled) => setPreferences((current) => ({ ...current, analytics: enabled }))} />
         </div>
 
         <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <button type="button" onClick={() => savePreferences(defaultPreferences)} className="border border-neutral-300 px-5 py-3 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100">Reject optional</button>
+          <button type="button" onClick={() => savePreferences(defaultPrivacyPreferences)} className="border border-neutral-300 px-5 py-3 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100">Essential only</button>
           <button type="button" onClick={() => savePreferences(preferences)} className="bg-neutral-900 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-brand">Save choices</button>
-          <button type="button" onClick={() => savePreferences({ analytics: true, preferences: true, marketing: true })} className="bg-brand px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-hover">Accept all</button>
+          <button type="button" onClick={() => savePreferences({ googleMaps: true, analytics: true, whatsappChat: true })} className="bg-brand px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-hover">Allow optional services</button>
         </div>
       </div>
     </div>

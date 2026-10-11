@@ -170,7 +170,7 @@ export function Footer() {
         {/* Company Information */}
         <div className="mt-8 text-xs leading-6 text-earth">
           <p className="font-semibold text-earth">
-            Shungu Africa Travel (Pvt) Ltd
+            Shungu Africa Travel
           </p>
 
           <p>Kazungula Street, Victoria Falls, Zimbabwe, 000263</p>
@@ -196,7 +196,7 @@ export function Footer() {
           </p>
 
           <p className="mt-2 text-earth">
-            © Shungu Africa Travel (Pvt) Ltd {new Date().getFullYear()}
+            © Shungu Africa Travel {new Date().getFullYear()}
           </p>
         </div>
       </div>

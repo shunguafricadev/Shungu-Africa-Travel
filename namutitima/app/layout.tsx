@@ -5,6 +5,8 @@ import "./globals.css";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { TripProvider } from "@/components/trip/TripProvider";
+import CookieConsentPopup from "@/components/ui/CookieConsentPopup";
+import { OptionalThirdPartyServices } from "@/components/layout/OptionalThirdPartyServices";
 import { SITE_URL } from "@/lib/seo/siteUrl";
 
 const quicksand = Quicksand({
@@ -153,6 +155,8 @@ export default function RootLayout({
           </div>
 
           <Footer />
+          <OptionalThirdPartyServices />
+          <CookieConsentPopup />
         </TripProvider>
       </body>
     </html>
