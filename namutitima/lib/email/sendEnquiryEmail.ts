@@ -61,8 +61,11 @@ export async function sendEnquiryNotification(
   }
 
   const resend = getResendClient();
-  const fromEmail =
-    process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+  const fromEmail = process.env.RESEND_FROM_EMAIL;
+
+  if (!fromEmail) {
+    throw new Error("Missing RESEND_FROM_EMAIL");
+  }
 
   const formattedDate = formatDate(
     enquiry.travelDate
@@ -86,8 +89,9 @@ export async function sendEnquiryNotification(
   const { data, error } = await resend.emails.send({
     from: `Shungu Africa Travel <${fromEmail}>`,
     to: notificationEmail,
+    replyTo: enquiry.email,
 
-    subject: `New enquiry ${enquiry.reference} — ${enquiry.activityName}`,
+    subject: `New Travel Enquiry | ${enquiry.reference} | Shungu Africa Travel`,
 
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; color: #171717;">
@@ -98,7 +102,6 @@ export async function sendEnquiryNotification(
             color: #f08720;
             font-size: 12px;
             font-weight: 600;
-            text-transform: uppercase;
             letter-spacing: 1px;
           ">
             New Travel Enquiry

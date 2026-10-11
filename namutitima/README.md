@@ -35,8 +35,9 @@ See [docs/application-overview.md](docs/application-overview.md) for the current
 3. Configure Supabase tables and Row Level Security for `enquiries` and
 	`reviews`. Keep the service-role key server-only and review pending entries
 	before publishing them.
-4. Configure Resend and `ENQUIRY_NOTIFICATION_EMAIL` before enabling enquiry
-	submissions. The API validates and rate-limits public submissions.
+4. Configure Resend, `RESEND_FROM_EMAIL` (a sender on a verified domain), and
+	`ENQUIRY_NOTIFICATION_EMAIL` before enabling enquiry submissions. The API
+	validates and rate-limits public submissions.
 5. Verify `/robots.txt`, `/sitemap.xml`, page metadata, canonical redirects and
 	Search Console ownership after deployment. SEO ranking cannot be guaranteed;
 	useful content, accurate internal links and real search performance still

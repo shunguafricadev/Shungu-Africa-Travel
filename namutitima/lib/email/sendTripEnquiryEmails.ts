@@ -69,8 +69,12 @@ function totalText(enquiry: TripEmailData) {
 
 export async function sendTripEnquiryNotification(enquiry: TripEmailData) {
   const resend = getResendClient();
-  const fromEmail =
-    process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+  const fromEmail = process.env.RESEND_FROM_EMAIL;
+
+  if (!fromEmail) {
+    throw new Error("Missing RESEND_FROM_EMAIL");
+  }
+
   const notificationEmail = process.env.ENQUIRY_NOTIFICATION_EMAIL;
   if (!notificationEmail) {
     throw new Error("Missing ENQUIRY_NOTIFICATION_EMAIL");
@@ -79,7 +83,8 @@ export async function sendTripEnquiryNotification(enquiry: TripEmailData) {
   return resend.emails.send({
     from: `Shungu Africa Travel <${fromEmail}>`,
     to: notificationEmail,
-    subject: `New trip enquiry ${enquiry.reference}`,
+    replyTo: enquiry.email,
+    subject: `New Travel Enquiry | ${enquiry.reference} | Shungu Africa Travel`,
     html: `<div style="font-family:Arial,sans-serif;max-width:620px;color:#171717">
       <p style="color:#f08720;font-size:12px;font-weight:600;text-transform:uppercase">New Shungu Africa Travel enquiry</p>
       <h1>${escapeHtml(enquiry.reference)}</h1>
@@ -95,13 +100,17 @@ export async function sendTripEnquiryNotification(enquiry: TripEmailData) {
 
 export async function sendTripEnquiryConfirmation(enquiry: TripEmailData) {
   const resend = getResendClient();
-  const fromEmail =
-    process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+  const fromEmail = process.env.RESEND_FROM_EMAIL;
+
+  if (!fromEmail) {
+    throw new Error("Missing RESEND_FROM_EMAIL");
+  }
 
   return resend.emails.send({
     from: `Shungu Africa Travel <${fromEmail}>`,
     to: enquiry.email,
-    subject: `We've received your Shungu Africa Travel enquiry — ${enquiry.reference}`,
+    replyTo: fromEmail,
+    subject: `We've Received Your Travel Enquiry | Shungu Africa Travel | ${enquiry.reference}`,
     html: `<div style="font-family:Arial,sans-serif;max-width:620px;color:#171717">
       <p style="color:#f08720;font-size:12px;font-weight:600;text-transform:uppercase">Enquiry received</p>
       <h1>Thanks, ${escapeHtml(enquiry.firstName)}.</h1>

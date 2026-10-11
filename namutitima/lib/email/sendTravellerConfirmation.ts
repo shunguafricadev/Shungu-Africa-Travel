@@ -35,8 +35,11 @@ export async function sendTravellerConfirmation(
   enquiry: TravellerConfirmationData
 ) {
   const resend = getResendClient();
-  const fromEmail =
-    process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+  const fromEmail = process.env.RESEND_FROM_EMAIL;
+
+  if (!fromEmail) {
+    throw new Error("Missing RESEND_FROM_EMAIL");
+  }
 
   const formattedDate = new Date(
     `${enquiry.travelDate}T00:00:00`
@@ -64,8 +67,9 @@ export async function sendTravellerConfirmation(
   const { data, error } = await resend.emails.send({
     from: `Shungu Africa Travel <${fromEmail}>`,
     to: enquiry.email,
+    replyTo: fromEmail,
 
-    subject: `We've received your enquiry — ${enquiry.reference}`,
+    subject: `We've Received Your Travel Enquiry | Shungu Africa Travel | ${enquiry.reference}`,
 
     html: `
       <div style="
@@ -85,7 +89,6 @@ export async function sendTravellerConfirmation(
             color: #f08720;
             font-size: 12px;
             font-weight: 600;
-            text-transform: uppercase;
             letter-spacing: 1px;
           ">
             Enquiry received
@@ -121,7 +124,6 @@ export async function sendTravellerConfirmation(
               margin: 0 0 6px;
               color: #737373;
               font-size: 12px;
-              text-transform: uppercase;
               letter-spacing: 1px;
             ">
               Your reference
