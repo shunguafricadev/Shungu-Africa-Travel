@@ -42,6 +42,24 @@ See [docs/application-overview.md](docs/application-overview.md) for the current
 	useful content, accurate internal links and real search performance still
 	determine results.
 
+## Deploy to Cloudflare Workers
+
+This app uses the OpenNext Cloudflare adapter so its server-rendered pages and
+API routes run as a Worker. Keep `npm run build` for the existing Next.js build;
+use these commands for Cloudflare:
+
+```bash
+npm run preview
+npm run deploy
+```
+
+For Cloudflare's Git integration, set the project root to `namutitima`, install
+command to `npm ci`, and deploy/build command to `npm run deploy`. Set the
+server-only variables from `.env.example` in the Worker settings as secrets or
+encrypted variables; do not upload or commit `.env.local`. The deployment
+requires a Cloudflare account and a configured Worker named
+`shungu-africa-travel`.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
