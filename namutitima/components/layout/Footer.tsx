@@ -1,0 +1,205 @@
+import Link from "next/link";
+
+
+type SocialIconProps = {
+  size?: number;
+};
+
+const FACEBOOK_URL = "https://www.facebook.com/p/Shungu-Africa-61595171992370/";
+
+const INSTAGRAM_URL = "https://www.instagram.com/shunguafrica/";
+
+const YOUTUBE_URL = "https://www.youtube.com/channel/UCfoz84sK9vUywqKKtCpSh8Q";
+
+const TIKTOK_URL = "https://www.tiktok.com/@shungu_africa";
+
+
+function FacebookIcon({ size = 17 }: SocialIconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      <path d="M14 8.4V6.8c0-.7.5-.9.9-.9h2.2V2.1L14 2c-3.5 0-4.4 2.6-4.4 4.3v2.1H6.8v4.3h2.8V22H14v-9.3h3.1l.4-4.3H14Z" />
+    </svg>
+  );
+}
+
+function InstagramIcon({ size = 17 }: SocialIconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+    >
+      <rect
+        x="3.5"
+        y="3.5"
+        width="17"
+        height="17"
+        rx="5"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
+      <circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" />
+    </svg>
+  );
+}
+
+function TikTokIcon({ size = 17 }: SocialIconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      <path d="M19.6 7.2a5.9 5.9 0 0 1-3.5-1.1A5.8 5.8 0 0 1 14.9 3h-3.7v12.2a2.8 2.8 0 1 1-2-2.7V8.7a6.6 6.6 0 1 0 5.7 6.5V9.8a9.4 9.4 0 0 0 5.4 1.7V7.8a5.9 5.9 0 0 1-.7-.1Z" />
+    </svg>
+  );
+}
+
+function YouTubeIcon({ size = 17 }: SocialIconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      <path d="M23.5 6.8a3.1 3.1 0 0 0-2.2-2.2C19.5 4.1 12 4.1 12 4.1s-7.5 0-9.3.5A3.1 3.1 0 0 0 .5 6.8C0 8.6 0 12 0 12s0 3.4.5 5.2a3.1 3.1 0 0 0 2.2 2.2c1.8.5 9.3.5 9.3.5s7.5 0 9.3-.5a3.1 3.1 0 0 0 2.2-2.2c.5-1.8-.5-5.2-.5-5.2s0-3.4.5-5.2ZM9.8 15.5V8.5l6.3 3.5-6.3 3.5Z" />
+    </svg>
+  );
+}
+
+export function Footer() {
+  return (
+    <footer className="bg-background text-earth">
+      <div className="mx-auto flex max-w-7xl flex-col items-center px-5 py-10 text-center sm:px-8 lg:px-12">
+        {/* Social Icons */}
+        <div className="flex items-center gap-3">
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-earth text-white transition-colors duration-200 hover:bg-brand"
+          >
+            <InstagramIcon size={17} />
+          </a>
+
+          <a
+            href={FACEBOOK_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-earth text-white transition-colors duration-200 hover:bg-brand"
+          >
+            <FacebookIcon size={17} />
+          </a>
+
+          <a
+            href={TIKTOK_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="TikTok"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-earth text-white transition-colors duration-200 hover:bg-brand"
+          >
+            <TikTokIcon size={17} />
+          </a>
+
+          <a
+            href={YOUTUBE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="YouTube"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-earth text-white transition-colors duration-200 hover:bg-brand"
+          >
+            <YouTubeIcon size={17} />
+          </a>
+        </div>
+
+        {/* Footer Links */}
+        <div className="mt-8">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-xs text-earth">
+            <Link
+              href="/legal#photo-credits"
+              className="transition-colors duration-200 hover:text-brand"
+            >
+              Photo credits
+            </Link>
+
+            <span className="text-earth/30">|</span>
+
+            <Link
+              href="/privacy"
+              className="transition-colors duration-200 hover:text-brand"
+            >
+              Privacy policy
+            </Link>
+
+            <span className="text-earth/30">|</span>
+
+            <Link
+              href="/legal#cookie-policy"
+              className="transition-colors duration-200 hover:text-brand"
+            >
+              Cookie policy
+            </Link>
+
+            <span className="text-earth/30">|</span>
+
+            <Link
+              href="/legal#sitemap"
+              className="transition-colors duration-200 hover:text-brand"
+            >
+              Sitemap
+            </Link>
+
+          </div>
+        </div>
+
+        {/* Company Information */}
+        <div className="mt-8 text-xs leading-6 text-earth">
+          <p className="font-semibold text-earth">
+            Shungu Africa Travel (Pvt) Ltd
+          </p>
+
+          <p>Kazungula Street, Victoria Falls, Zimbabwe, 000263</p>
+
+          <p>
+            Telephone -{" "}
+            <a
+              href="tel:+263777102275"
+              className="transition-colors underline duration-200 hover:text-brand"
+            >
+              +263 77 710 2275
+            </a>
+
+            <span className="mx-1">|</span>
+
+            Email -{" "}
+            <a
+              href="mailto:davies@shunguafrica.com"
+              className="transition-colors underline duration-200 hover:text-brand"
+            >
+              davies@shunguafrica.com
+            </a>
+          </p>
+
+          <p className="mt-2 text-earth">
+            © Shungu Africa Travel (Pvt) Ltd {new Date().getFullYear()}
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
