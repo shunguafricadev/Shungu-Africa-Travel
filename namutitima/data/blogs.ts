@@ -20,7 +20,7 @@ export const blogs = [
     category: "Travel Insights",
     readTime: "6 Min Read",
     image: "/images/optimized/blogs/why-2024.png",
-    author: "Davies Gotosa",
+    author: "Tadiwa Choga",
     authorImage: "/images/optimized/blogs/daviesprofile.png",
     date: "Jan 24, 2024",
   },
