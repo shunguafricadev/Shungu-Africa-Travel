@@ -52,6 +52,7 @@ const websiteStructuredData = {
   "@type": "WebSite",
   "@id": `${siteUrl.replace(/\/$/, "")}/#website`,
   name: brandName,
+  alternateName: "Shungu Africa",
   url: siteUrl,
   publisher: { "@id": `${siteUrl.replace(/\/$/, "")}/#organization` },
 };

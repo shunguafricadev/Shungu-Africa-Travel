@@ -24,7 +24,6 @@ const staticRoutes = [
 function entry(path: string, priority: number, changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]): MetadataRoute.Sitemap[number] {
   return {
     url: new URL(path, SITE_URL).toString(),
-    lastModified: new Date(),
     changeFrequency,
     priority,
   };
