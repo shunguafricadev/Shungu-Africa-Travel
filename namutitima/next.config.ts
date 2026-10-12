@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    formats: ["image/webp"],
+    formats: ["image/avif", "image/webp"],
     qualities: [60, 65, 70, 75],
     minimumCacheTTL: 2592000,
   },

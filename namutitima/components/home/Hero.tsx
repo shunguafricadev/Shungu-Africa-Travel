@@ -12,14 +12,23 @@ import {
 const heroImage = "/images/optimized/destinations/destinations-hero.webp";
 const heroVideo = "/videos/home/herovid-optimized.webm";
 
-function subscribeToMotionPreference(callback: () => void) {
-  const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-  preference.addEventListener("change", callback);
-  return () => preference.removeEventListener("change", callback);
+function subscribeToVideoPreference(callback: () => void) {
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const desktopViewport = window.matchMedia("(min-width: 768px)");
+  reducedMotion.addEventListener("change", callback);
+  desktopViewport.addEventListener("change", callback);
+
+  return () => {
+    reducedMotion.removeEventListener("change", callback);
+    desktopViewport.removeEventListener("change", callback);
+  };
 }
 
-function getMotionPreference() {
-  return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function getVideoPreference() {
+  return (
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+    window.matchMedia("(min-width: 768px)").matches
+  );
 }
 
 export default function Hero() {
@@ -27,14 +36,14 @@ export default function Hero() {
   const backgroundRef = useRef<HTMLDivElement>(null);
   const [videoReady, setVideoReady] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
-  const motionAllowed = useSyncExternalStore(
-    subscribeToMotionPreference,
-    getMotionPreference,
+  const videoAllowed = useSyncExternalStore(
+    subscribeToVideoPreference,
+    getVideoPreference,
     () => false,
   );
 
   useEffect(() => {
-    if (!motionAllowed) return;
+    if (!videoAllowed) return;
 
     let timeoutId: number | undefined;
     const enableVideoAfterLoad = () => {
@@ -51,7 +60,7 @@ export default function Hero() {
       window.removeEventListener("load", enableVideoAfterLoad);
       if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
-  }, [motionAllowed]);
+  }, [videoAllowed]);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -106,7 +115,7 @@ export default function Hero() {
           sizes="100vw"
           className="object-cover"
         />
-        {motionAllowed && videoReady && (
+        {videoAllowed && videoReady && (
           <video
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
               videoPlaying ? "opacity-100" : "opacity-0"

@@ -3,34 +3,24 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import type { Activity } from "@/data/activities";
 import { formatCurrency } from "@/lib/formatCurrency";
 
-type ActivityCardProps = {
-  slug: string;
-  name: string;
-  location: string;
-  country: string;
-  image: string;
-  description: string;
-  category: string;
-  duration: string;
-  pricing: {
-    adult: {
-      amount: number;
-      currency: string;
-      label: "From per person";
-    };
-    child: {
-      amount: number;
-      currency: string;
-      label: "From per person";
-    };
-  };
-  rating: number | null;
-  reviewCount: number;
-  highlights: string[];
-  badge?: string;
-};
+type ActivityCardProps = Pick<
+  Activity,
+  | "slug"
+  | "name"
+  | "location"
+  | "country"
+  | "image"
+  | "description"
+  | "duration"
+  | "pricing"
+  | "rating"
+  | "reviewCount"
+  | "highlights"
+  | "badge"
+>;
 
 export function ActivityCard({
   slug,

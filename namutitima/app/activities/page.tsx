@@ -43,9 +43,38 @@ export default function ActivitiesPage() {
               className="lg:max-w-2xl"
             />
             <Pagination className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {activities.map((activity) => (
-                <ActivityCard key={activity.slug} {...activity} />
-              ))}
+              {activities.map(
+                ({
+                  slug,
+                  name,
+                  location,
+                  country,
+                  image,
+                  description,
+                  duration,
+                  pricing,
+                  rating,
+                  reviewCount,
+                  highlights,
+                  badge,
+                }) => (
+                  <ActivityCard
+                    key={slug}
+                    slug={slug}
+                    name={name}
+                    location={location}
+                    country={country}
+                    image={image}
+                    description={description}
+                    duration={duration}
+                    pricing={pricing}
+                    rating={rating}
+                    reviewCount={reviewCount}
+                    highlights={highlights}
+                    badge={badge}
+                  />
+                ),
+              )}
             </Pagination>
           </div>
         </Container>

@@ -14,9 +14,38 @@ export function ExperiencesPreview() {
           />
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {activities.slice(0, 3).map((activity) => (
-              <ActivityCard key={activity.slug} {...activity} />
-            ))}
+            {activities.slice(0, 3).map(
+              ({
+                slug,
+                name,
+                location,
+                country,
+                image,
+                description,
+                duration,
+                pricing,
+                rating,
+                reviewCount,
+                highlights,
+                badge,
+              }) => (
+                <ActivityCard
+                  key={slug}
+                  slug={slug}
+                  name={name}
+                  location={location}
+                  country={country}
+                  image={image}
+                  description={description}
+                  duration={duration}
+                  pricing={pricing}
+                  rating={rating}
+                  reviewCount={reviewCount}
+                  highlights={highlights}
+                  badge={badge}
+                />
+              ),
+            )}
           </div>
         </div>
       </Container>
