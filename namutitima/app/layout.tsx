@@ -14,14 +14,14 @@ const quicksand = Quicksand({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
-  preload: false,
+  preload: true,
 });
 
 const cormorantGaramond = Cormorant_Garamond({
   variable: "--font-cormorant-garamond",
   subsets: ["latin"],
   display: "swap",
-  preload: false,
+  preload: true,
 });
 
 const siteUrl = SITE_URL;

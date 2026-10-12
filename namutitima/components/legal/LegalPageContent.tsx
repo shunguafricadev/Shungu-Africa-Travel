@@ -9,7 +9,7 @@ export default function LegalPageContent() {
     <main id="main-content" className="bg-white text-black">
       {/* Hero */}
       <PageHero
-        image="/images/destinations/destinations-hero.png"
+        image="/images/destinations/destinations-hero.webp"
         title="Legal & Information"
         description="Information about how we use this website, protect your information, use cookies, and credit the visual content used across our digital experience."
       />

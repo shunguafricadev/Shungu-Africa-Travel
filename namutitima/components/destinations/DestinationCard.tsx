@@ -7,6 +7,7 @@ type DestinationCardProps = {
   country: string;
   region: string;
   heroImage: string;
+  sizes: string;
   location?: string;
   image?: string;
   description?: string;
@@ -18,6 +19,7 @@ export function DestinationCard({
   country,
   heroImage,
   image,
+  sizes,
 }: DestinationCardProps) {
   return (
     <Link
@@ -27,11 +29,11 @@ export function DestinationCard({
       {/* Image */}
       <div className="relative h-80 w-full bg-neutral-100">
         <Image
-          src={heroImage || image || "/images/destinations/destinations-hero.png"}
+          src={heroImage || image || "/images/destinations/destinations-hero.webp"}
           alt={name}
           fill
           quality={70}
-          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+          sizes={sizes}
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
       </div>

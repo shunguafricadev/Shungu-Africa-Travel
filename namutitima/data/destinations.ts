@@ -226,12 +226,12 @@ type DestinationOverviewData = {
 
 const destinationImageBySlug: Record<string, string> = {
   "victoria-falls": "/images/optimized/destinations/victoria-falls.png",
-  "cape-town": "/images/optimized/destinations/cape-town.png",
+  "cape-town": "/images/optimized/destinations/cape-town.webp",
   "kruger-national-park": "/images/optimized/destinations/kruger-national-park.png",
   "sossusvlei": "/images/optimized/destinations/sossuvlei.png",
   "etosha-national-park": "/images/optimized/destinations/etosha.png",
   "chobe-national-park": "/images/optimized/destinations/chobe-national-park.png",
-  "okavango-delta": "/images/optimized/destinations/okavango-delta.png",
+  "okavango-delta": "/images/optimized/destinations/okavango-delta-optimized.webp",
   "swakopmund": "/images/optimized/destinations/swakopmund.png",
   "hwange-national-park": "/images/optimized/destinations/hwange-national-PARK.png",
   "great-zimbabwe": "/images/optimized/destinations/great-zimbabwe.png",
@@ -241,7 +241,7 @@ const destinationImageBySlug: Record<string, string> = {
 };
 
 function resolveDestinationImage(slug: string) {
-  return destinationImageBySlug[slug] ?? "/images/destinations/destinations-hero.png";
+  return destinationImageBySlug[slug] ?? "/images/destinations/destinations-hero.webp";
 }
 
 function createOverviewDestination(
@@ -1107,7 +1107,7 @@ const destinationEntries: Destination[] = [
     name: "Cape Town",
     country: "South Africa",
     region: "Western Cape",
-    heroImage: "/images/optimized/destinations/cape-town.png",
+    heroImage: "/images/optimized/destinations/cape-town.webp",
     tagline:
       "Discover Cape Town's mountain scenery, Atlantic coastline, neighbourhoods and food culture.",
     overview: {

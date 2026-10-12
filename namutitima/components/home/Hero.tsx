@@ -36,8 +36,21 @@ export default function Hero() {
   useEffect(() => {
     if (!motionAllowed) return;
 
-    const timeoutId = window.setTimeout(() => setVideoReady(true), 1800);
-    return () => window.clearTimeout(timeoutId);
+    let timeoutId: number | undefined;
+    const enableVideoAfterLoad = () => {
+      timeoutId = window.setTimeout(() => setVideoReady(true), 1800);
+    };
+
+    if (document.readyState === "complete") {
+      enableVideoAfterLoad();
+    } else {
+      window.addEventListener("load", enableVideoAfterLoad, { once: true });
+    }
+
+    return () => {
+      window.removeEventListener("load", enableVideoAfterLoad);
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+    };
   }, [motionAllowed]);
 
   useEffect(() => {
@@ -103,7 +116,6 @@ export default function Hero() {
             loop
             playsInline
             preload="none"
-            poster={heroImage}
             aria-hidden="true"
             onPlaying={() => setVideoPlaying(true)}
           >

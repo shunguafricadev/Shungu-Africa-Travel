@@ -54,7 +54,7 @@ export function AboutPreview() {
         className="absolute -inset-y-12 inset-x-0 will-change-transform"
       >
         <Image
-          src="/images/optimized/about/about-preview.webp"
+          src="/images/optimized/about/about-preview-optimized.webp"
           alt=""
           fill
           quality={70}
