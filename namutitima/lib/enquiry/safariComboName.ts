@@ -37,6 +37,10 @@ export function getSafariComboName(
   selectedDestinations: readonly SafariDestination[],
   selectedActivities: readonly SafariActivity[],
 ) {
+  if (selectedDestinations.length === 0) {
+    return "";
+  }
+
   const countries = [...new Set(selectedDestinations.map(({ country }) => country))];
   let destinationName: string;
 
@@ -57,6 +61,6 @@ export function getSafariComboName(
   ];
 
   return activityThemes.length
-    ? `${destinationName} — ${activityThemes.join(" & ")} Combo`
-    : `${destinationName} Combo`;
+    ? `${destinationName}: ${activityThemes.join(" & ")} Journey`
+    : destinationName;
 }

@@ -82,7 +82,7 @@ function YouTubeIcon({ size = 17 }: SocialIconProps) {
 
 export function Footer() {
   return (
-    <footer className="bg-background text-earth">
+    <footer className="mt-auto bg-background text-earth">
       <div className="mx-auto flex max-w-7xl flex-col items-center px-5 py-10 text-center sm:px-8 lg:px-12">
         {/* Social Icons */}
         <div className="flex items-center gap-3">

@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import type { SafariItineraryDetails } from "@/lib/enquiry/safariItinerary";
 
 function getResendClient() {
   const apiKey = process.env.RESEND_API_KEY;
@@ -20,7 +21,9 @@ type TravellerConfirmationData = {
   currency: string;
   firstName: string;
   email: string;
+  country?: string | null;
   message?: string | null;
+  itineraryDetails?: SafariItineraryDetails | null;
 };
 
 function escapeHtml(value: unknown) {
@@ -30,6 +33,40 @@ function escapeHtml(value: unknown) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function itineraryDetailsHtml(details: SafariItineraryDetails) {
+  const destinationList = details.destinations
+    .map(
+      ({ name, country }) =>
+        `<li>${escapeHtml(name)} (${escapeHtml(country)})</li>`,
+    )
+    .join("");
+  const activityList = details.activities
+    .map(({ name }) => `<li>${escapeHtml(name)}</li>`)
+    .join("");
+  const estimate = details.estimatedPerPerson
+    ? `${escapeHtml(details.estimatedPerPerson.currency)} ${details.estimatedPerPerson.low.toLocaleString()}–${details.estimatedPerPerson.high.toLocaleString()} per person`
+    : "To be confirmed";
+
+  return `
+    <h2 style="margin-top:30px;font-size:17px;">Your requested itinerary</h2>
+    <p style="font-size:14px;line-height:1.8;">
+      <strong>${escapeHtml(details.name)}</strong><br />
+      <strong>Duration:</strong> ${details.durationDays} days<br />
+      <strong>Travellers:</strong> ${details.travellers}<br />
+      <strong>Accommodation:</strong> ${escapeHtml(details.accommodation)}<br />
+      <strong>Estimated range:</strong> ${estimate}
+    </p>
+    <p style="font-size:14px;line-height:1.8;margin-bottom:4px;"><strong>Destinations</strong></p>
+    <ul style="font-size:14px;line-height:1.8;margin-top:0;">${destinationList}</ul>
+    <p style="font-size:14px;line-height:1.8;margin-bottom:4px;"><strong>Selected activities</strong></p>
+    ${
+      activityList
+        ? `<ul style="font-size:14px;line-height:1.8;margin-top:0;">${activityList}</ul>`
+        : `<p style="font-size:14px;line-height:1.8;margin-top:0;">To be discussed</p>`
+    }
+  `;
 }
 
 export async function sendTravellerConfirmation(
@@ -155,16 +192,27 @@ export async function sendTravellerConfirmation(
             ${escapeHtml(formattedDate)}<br />
 
             <strong>Participants:</strong>
-            ${participantText}<br />
+            ${participantText}
+            ${enquiry.country ? `<br /><strong>Country:</strong> ${escapeHtml(enquiry.country)}` : ""}
+            ${
+              enquiry.itineraryDetails
+                ? ""
+                : `<br /><strong>Estimated total:</strong>
+                  ${
+                    enquiry.total === null
+                      ? "Price on request"
+                      : `${escapeHtml(enquiry.currency)} ${enquiry.total.toLocaleString()}`
+                  }`
+            }
 
-            <strong>Estimated total:</strong>
-            ${enquiry.total === null
-              ? "Price on request"
-              : `${escapeHtml(enquiry.currency)} ${enquiry.total.toLocaleString()}`}
           </p>
 
+          ${enquiry.itineraryDetails
+            ? itineraryDetailsHtml(enquiry.itineraryDetails)
+            : ""}
+
           ${enquiry.message
-            ? `<h2 style="margin-top: 30px; font-size: 17px;">Your itinerary details</h2>
+            ? `<h2 style="margin-top: 30px; font-size: 17px;">Your note</h2>
               <div style="background: #f5f5f5; padding: 16px; font-size: 14px; line-height: 1.8; white-space: pre-line;">
                 ${escapeHtml(enquiry.message)}
               </div>`

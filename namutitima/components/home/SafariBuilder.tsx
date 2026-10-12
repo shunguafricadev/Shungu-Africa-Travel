@@ -2,12 +2,19 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Check, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
+import {
+  getCountries,
+  getCountryCallingCode,
+  parsePhoneNumberFromString,
+  type CountryCode,
+} from "libphonenumber-js";
 
 import { formatDateForInput } from "@/components/activities/booking/dateUtils";
 import Container from "@/components/ui/Container";
 import { activities } from "@/data/activities";
 import { destinations } from "@/data/destinations";
 import { getSafariComboName } from "@/lib/enquiry/safariComboName";
+import type { SafariItineraryDetails } from "@/lib/enquiry/safariItinerary";
 
 const destinationEmojis: Record<string, string> = {
   "victoria-falls": "🌊",
@@ -80,20 +87,38 @@ const builderActivityEmojis: Record<string, string> = {
   "village-community-cultural-experience": "🪘",
 };
 
+const destinationActivityKeywords: Record<string, string[]> = {
+  "victoria-falls": ["victoria falls", "zambezi"],
+  "cape-town": ["cape town", "cape peninsula", "western cape"],
+  "kruger-national-park": ["kruger national park"],
+  sossusvlei: ["sossusvlei", "deadvlei", "sesriem"],
+  "etosha-national-park": ["etosha national park"],
+  "chobe-national-park": ["chobe", "kasane"],
+};
+
 const experienceOptions = activities
-  .filter((activity) => activity.slug in builderActivityEmojis)
   .map((activity) => ({
-  id: activity.slug,
-  name: activity.name,
-  category: activity.category,
-  location: activity.location,
-  emoji: builderActivityEmojis[activity.slug],
-  price: activity.pricing.adult.amount,
-  priceLabel:
-    activity.pricing.adult.amount > 0
-      ? `From ${activity.pricing.adult.currency} ${Math.round(activity.pricing.adult.amount).toLocaleString("en-US")}`
-      : "Price on request",
+    id: activity.slug,
+    name: activity.name,
+    category: activity.category,
+    location: activity.location,
+    emoji: builderActivityEmojis[activity.slug] ?? "✨",
+    price: activity.pricing.adult.amount,
+    priceLabel:
+      activity.pricing.adult.amount > 0
+        ? `From ${activity.pricing.adult.currency} ${Math.round(activity.pricing.adult.amount).toLocaleString("en-US")}`
+        : "Price on request",
   }));
+
+const maxActivitiesPerBatch = 6;
+
+function getActivitiesForDestination(destinationId: string) {
+  const keywords = destinationActivityKeywords[destinationId] ?? [];
+  return experienceOptions.filter((activity) => {
+    const location = activity.location.toLowerCase();
+    return keywords.some((keyword) => location.includes(keyword));
+  });
+}
 
 const steps = [
   "Destinations",
@@ -105,6 +130,23 @@ const steps = [
 
 const whatsappNumber = "263777102275";
 const enquiryEmail = "davies@shunguafrica.com";
+const countryNames = new Intl.DisplayNames(["en"], { type: "region" });
+const phoneCountries = getCountries()
+  .map((code) => ({
+    code,
+    name: countryNames.of(code) ?? code,
+    callingCode: getCountryCallingCode(code),
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+function getCountryFlag(code: CountryCode) {
+  return String.fromCodePoint(
+    ...code
+      .toUpperCase()
+      .split("")
+      .map((letter) => 127397 + letter.charCodeAt(0)),
+  );
+}
 
 function getDefaultSafariDate() {
   const date = new Date();
@@ -123,6 +165,9 @@ export function SafariBuilder() {
   const [travellers, setTravellers] = useState(2);
   const [accommodation, setAccommodation] = useState("");
   const [selectedExperiences, setSelectedExperiences] = useState<string[]>([]);
+  const [showAdditionalActivities, setShowAdditionalActivities] = useState(false);
+  const [additionalActivityId, setAdditionalActivityId] = useState("");
+  const [phoneCountry, setPhoneCountry] = useState<CountryCode>("ZW");
   const [form, setForm] = useState({
     name: "",
     dates: getDefaultSafariDate(),
@@ -174,6 +219,101 @@ export function SafariBuilder() {
     selectedDestinationItems,
     selectedExperienceItems,
   );
+  const itineraryHeading = comboName || "Build Your Itinerary";
+  const assignedActivityIds = new Set<string>();
+  const destinationActivityGroups = selectedDestinationItems.map(
+    (destination) => {
+      const destinationActivities = getActivitiesForDestination(destination.id)
+        .filter(({ id }) => !assignedActivityIds.has(id));
+      destinationActivities.forEach(({ id }) => assignedActivityIds.add(id));
+
+      return { destination, activities: destinationActivities };
+    },
+  );
+  const activitiesPerDestination = destinationActivityGroups.length
+    ? Math.floor(maxActivitiesPerBatch / destinationActivityGroups.length)
+    : 0;
+  const extraDestinationSlots = destinationActivityGroups.length
+    ? maxActivitiesPerBatch % destinationActivityGroups.length
+    : 0;
+  const activityAllocation = destinationActivityGroups.map(
+    ({ activities: options }, index) =>
+      Math.min(
+        options.length,
+        activitiesPerDestination + (index < extraDestinationSlots ? 1 : 0),
+      ),
+  );
+  let allocatedActivityCount = activityAllocation.reduce(
+    (total, count) => total + count,
+    0,
+  );
+  while (allocatedActivityCount < maxActivitiesPerBatch) {
+    let allocatedInRound = false;
+    for (let index = 0; index < destinationActivityGroups.length; index += 1) {
+      if (
+        activityAllocation[index] <
+        destinationActivityGroups[index].activities.length
+      ) {
+        activityAllocation[index] += 1;
+        allocatedActivityCount += 1;
+        allocatedInRound = true;
+        if (allocatedActivityCount === maxActivitiesPerBatch) break;
+      }
+    }
+    if (!allocatedInRound) break;
+  }
+  const selectedDestinationActivityGroups = destinationActivityGroups.map(
+    (group, index) => ({
+      ...group,
+      activities: group.activities.slice(0, activityAllocation[index]),
+    }),
+  );
+  const initiallyShownActivityIds = new Set(
+    selectedDestinationActivityGroups.flatMap(({ activities: options }) =>
+      options.map(({ id }) => id),
+    ),
+  );
+  const visibleDestinationActivityGroups = selectedDestinationActivityGroups.map(
+    (group) => {
+      const allDestinationActivities =
+        destinationActivityGroups.find(
+          ({ destination }) => destination.id === group.destination.id,
+        )?.activities ?? [];
+
+      return {
+        ...group,
+        activities: [
+          ...allDestinationActivities.filter(
+            ({ id }) =>
+              selectedExperiences.includes(id) &&
+              !initiallyShownActivityIds.has(id),
+          ),
+          ...group.activities,
+        ],
+      };
+    },
+  );
+  const initialActivitiesAreSelected =
+    initiallyShownActivityIds.size === maxActivitiesPerBatch &&
+    [...initiallyShownActivityIds].every((id) =>
+      selectedExperiences.includes(id),
+    );
+  const additionalActivityOptions = destinationActivityGroups.flatMap(
+    ({ destination, activities: options }) =>
+      options
+        .filter(
+          ({ id }) =>
+            !initiallyShownActivityIds.has(id) &&
+            !selectedExperiences.includes(id),
+        )
+        .map((activity) => ({
+          ...activity,
+          destinationName: destination.name,
+        })),
+  );
+  const selectedPhoneCountry = phoneCountries.find(
+    ({ code }) => code === phoneCountry,
+  );
 
   function toggleSelection(
     current: string[],
@@ -187,6 +327,22 @@ export function SafariBuilder() {
     );
   }
 
+  function toggleDestinationSelection(id: string) {
+    const nextDestinations = selectedDestinations.includes(id)
+      ? selectedDestinations.filter((item) => item !== id)
+      : [...selectedDestinations, id];
+    const nextAvailableActivityIds = new Set(
+      nextDestinations.flatMap((destinationId) =>
+        getActivitiesForDestination(destinationId).map(({ id: activityId }) => activityId),
+      ),
+    );
+
+    setSelectedDestinations(nextDestinations);
+    setSelectedExperiences((current) =>
+      current.filter((activityId) => nextAvailableActivityIds.has(activityId)),
+    );
+  }
+
   function restart() {
     setStep(1);
     setSelectedDestinations([]);
@@ -194,6 +350,9 @@ export function SafariBuilder() {
     setTravellers(2);
     setAccommodation("");
     setSelectedExperiences([]);
+    setShowAdditionalActivities(false);
+    setAdditionalActivityId("");
+    setPhoneCountry("ZW");
     setForm({
       name: "",
       dates: getDefaultSafariDate(),
@@ -212,37 +371,53 @@ export function SafariBuilder() {
       return;
     }
 
+    const parsedPhoneNumber = parsePhoneNumberFromString(
+      form.whatsapp,
+      phoneCountry,
+    );
+    if (!parsedPhoneNumber?.isPossible()) {
+      setError("Please enter a valid WhatsApp number for the selected country.");
+      return;
+    }
+
     setIsSubmitting(true);
     setError("");
 
-    const destinationNames = selectedDestinationItems.map((item) => item.name);
-    const experienceNames = selectedExperienceItems.map((item) => item.name);
-    const message = [
-      `Destinations: ${destinationNames.join(", ")}`,
-      `Accommodation budget: ${accommodationChoice?.name ?? "Not selected"}`,
-      `Experiences: ${experienceNames.length ? experienceNames.join(", ") : "None selected"}`,
-      estimateLow !== null && estimateHigh !== null
-        ? `Estimated per person: ${formatMoney(estimateLow)} – ${formatMoney(estimateHigh)}`
-        : "",
-      form.specialRequests ? `Special requests: ${form.specialRequests}` : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
-
+    const itineraryDetails: SafariItineraryDetails = {
+      name: itineraryHeading,
+      durationDays: duration,
+      travellers,
+      destinations: selectedDestinationItems.map(({ id, name, country }) => ({
+        slug: id,
+        name,
+        country,
+      })),
+      accommodation: accommodationChoice.name,
+      activities: selectedExperienceItems.map(({ id, name }) => ({
+        slug: id,
+        name,
+      })),
+      estimatedPerPerson:
+        estimateLow !== null && estimateHigh !== null
+          ? { currency: "USD", low: estimateLow, high: estimateHigh }
+          : null,
+    };
     try {
       const response = await fetch("/api/enquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contact: true,
-          context: comboName,
+          context: itineraryHeading,
           fullName: form.name,
           email: form.email,
-          whatsapp: form.whatsapp,
+          whatsapp: parsedPhoneNumber.number,
+          country: selectedPhoneCountry?.name ?? countryNames.of(phoneCountry) ?? "",
           arrival: form.dates,
           duration: `${duration} days`,
           travellers,
-          message,
+          itineraryDetails,
+          message: form.specialRequests,
         }),
       });
       const result = await response.json();
@@ -272,7 +447,7 @@ export function SafariBuilder() {
       : "",
     `Name: ${form.name}`,
     `Preferred dates: ${form.dates}`,
-    `WhatsApp: ${form.whatsapp}`,
+    `WhatsApp: +${selectedPhoneCountry?.callingCode ?? getCountryCallingCode(phoneCountry)} ${form.whatsapp}`,
     `Email: ${form.email}`,
     form.specialRequests ? `Special requests: ${form.specialRequests}` : "",
   ]
@@ -296,7 +471,7 @@ export function SafariBuilder() {
               id="safari-builder-title"
               className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl"
             >
-              Build Your Itinerary
+              {itineraryHeading}
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-subtle">
               Create a trip that feels like yours. Choose from our available
@@ -370,7 +545,7 @@ export function SafariBuilder() {
                   <h3 className="text-section-title font-semibold tracking-tight text-neutral-900">
                     Enquiry received.
                   </h3>
-                  <p className="mt-3 max-w-xl text-sm leading-6 text-neutral-600">
+                  <p className="mx-auto mt-3 max-w-xl text-center text-sm leading-6 text-neutral-600">
                     Thanks for getting in touch. We&apos;ve received your
                     enquiry for{" "}
                     <span className="font-medium text-neutral-900">
@@ -412,11 +587,7 @@ export function SafariBuilder() {
                               type="button"
                               aria-pressed={isSelected}
                               onClick={() =>
-                                toggleSelection(
-                                  selectedDestinations,
-                                  destination.id,
-                                  setSelectedDestinations,
-                                )
+                                toggleDestinationSelection(destination.id)
                               }
                               className={`relative flex min-h-36 flex-col items-start rounded-xs border p-4 text-left transition ${
                                 isSelected
@@ -577,67 +748,145 @@ export function SafariBuilder() {
                         Which activities would make it unforgettable?
                       </h3>
                       <p className="mt-2 text-sm text-subtle">
-                        Choose from the activities currently listed on our
-                        site. Listed adult prices are shown per person.
+                        Choose from up to six activities, distributed across
+                        your selected destinations. Listed adult prices are
+                        shown per person.
                       </p>
-                      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {experienceOptions.map((experience) => {
-                          const isSelected = selectedExperiences.includes(
-                            experience.id,
-                          );
-
-                          return (
-                            <button
-                              key={experience.id}
-                              type="button"
-                              aria-pressed={isSelected}
-                              onClick={() =>
-                                toggleSelection(
-                                  selectedExperiences,
-                                  experience.id,
-                                  setSelectedExperiences,
-                                )
-                              }
-                              className={`relative rounded-xs border p-4 text-left transition ${
-                                isSelected
-                                  ? "border-brand bg-brand/5 ring-1 ring-brand"
-                                  : "border-neutral-200 hover:border-brand/50"
-                              }`}
+                      {visibleDestinationActivityGroups.map(
+                        ({ destination, activities: destinationActivities }) => (
+                          <section
+                            key={destination.id}
+                            aria-labelledby={`activities-${destination.id}`}
+                            className="mt-7"
+                          >
+                            <h4
+                              id={`activities-${destination.id}`}
+                              className="border-b border-neutral-200 pb-3 text-lg font-semibold text-foreground"
                             >
-                              <span
-                                className={`absolute right-3 top-3 flex size-6 items-center justify-center rounded-full border ${
-                                  isSelected
-                                    ? "border-brand bg-brand text-white"
-                                    : "border-neutral-300 bg-white text-transparent"
-                                }`}
+                              {destination.name}
+                              <span className="ml-2 text-sm font-normal text-subtle">
+                                {destination.country}
+                              </span>
+                            </h4>
+                            {destinationActivities.length ? (
+                              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                {destinationActivities.map((experience) => {
+                                  const isSelected = selectedExperiences.includes(
+                                    experience.id,
+                                  );
+
+                                  return (
+                                    <button
+                                      key={experience.id}
+                                      type="button"
+                                      aria-pressed={isSelected}
+                                      onClick={() =>
+                                        toggleSelection(
+                                          selectedExperiences,
+                                          experience.id,
+                                          setSelectedExperiences,
+                                        )
+                                      }
+                                      className={`relative rounded-xs border p-4 text-left transition ${
+                                        isSelected
+                                          ? "border-brand bg-brand/5 ring-1 ring-brand"
+                                          : "border-neutral-200 hover:border-brand/50"
+                                      }`}
+                                    >
+                                      <span
+                                        className={`absolute right-3 top-3 flex size-6 items-center justify-center rounded-full border ${
+                                          isSelected
+                                            ? "border-brand bg-brand text-white"
+                                            : "border-neutral-300 bg-white text-transparent"
+                                        }`}
+                                      >
+                                        <Check aria-hidden="true" className="size-4" />
+                                      </span>
+                                      <span aria-hidden="true" className="text-2xl">
+                                        {experience.emoji}
+                                      </span>
+                                      <h5 className="mt-3 font-semibold text-foreground">
+                                        {experience.name}
+                                      </h5>
+                                      <p className="mt-1 text-xs leading-5 text-subtle">
+                                        {experience.category} · {experience.location}
+                                      </p>
+                                      <p className="mt-3 text-sm font-semibold text-brand">
+                                        {experience.price > 0 ? (
+                                          <>
+                                            {experience.priceLabel}
+                                            <span className="font-normal text-subtle">
+                                              {" "}per person
+                                            </span>
+                                          </>
+                                        ) : (
+                                          experience.priceLabel
+                                        )}
+                                      </p>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            ) : (
+                              <p className="mt-4 rounded-xs bg-neutral-50 p-4 text-sm leading-6 text-subtle">
+                                No listed activities are currently associated
+                                with this destination. You can still include it
+                                in your itinerary and discuss activities with us.
+                              </p>
+                            )}
+                          </section>
+                        ),
+                      )}
+                      {initialActivitiesAreSelected &&
+                        additionalActivityOptions.length > 0 && (
+                          <div className="mt-6">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setShowAdditionalActivities((visible) => !visible)
+                            }
+                            className="border border-neutral-300 px-5 py-3 text-sm font-semibold text-foreground transition hover:border-brand hover:bg-brand/5"
+                            aria-expanded={showAdditionalActivities}
+                            aria-controls="additional-activities"
+                          >
+                            {showAdditionalActivities
+                              ? "Close additional activities"
+                              : "Add more activities"}
+                          </button>
+                          {showAdditionalActivities && (
+                            <div id="additional-activities" className="mt-4 max-w-xl">
+                              <label
+                                htmlFor="additional-activity"
+                                className="mb-2 block text-sm font-medium"
                               >
-                                <Check aria-hidden="true" className="size-4" />
-                              </span>
-                              <span aria-hidden="true" className="text-2xl">
-                                {experience.emoji}
-                              </span>
-                              <h4 className="mt-3 font-semibold text-foreground">
-                                {experience.name}
-                              </h4>
-                              <p className="mt-1 text-xs leading-5 text-subtle">
-                                {experience.category} · {experience.location}
-                              </p>
-                              <p className="mt-3 text-sm font-semibold text-brand">
-                                {experience.price > 0 ? (
-                                  <>
-                                    {experience.priceLabel}
-                                    <span className="font-normal text-subtle">
-                                      {" "}per person
-                                    </span>
-                                  </>
-                                ) : (
-                                  experience.priceLabel
-                                )}
-                              </p>
-                            </button>
-                          );
-                        })}
-                      </div>
+                                Choose another activity
+                              </label>
+                              <select
+                                id="additional-activity"
+                                value={additionalActivityId}
+                                onChange={(event) => {
+                                  const activityId = event.target.value;
+                                  if (activityId) {
+                                    setSelectedExperiences((current) => [
+                                      ...current,
+                                      activityId,
+                                    ]);
+                                    setAdditionalActivityId("");
+                                  }
+                                }}
+                                className="w-full border border-black/10 bg-white px-4 py-3 text-sm outline-none focus:border-black/40"
+                              >
+                                <option value="">Select an activity</option>
+                                {additionalActivityOptions.map((activity) => (
+                                  <option key={activity.id} value={activity.id}>
+                                    {activity.destinationName}: {activity.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
+                          </div>
+                        )}
                     </div>
                   )}
 
@@ -780,24 +1029,58 @@ export function SafariBuilder() {
                           </div>
                           <div>
                             <label
-                              htmlFor="safari-whatsapp"
+                              htmlFor="safari-phone-country"
                               className="mb-2 block text-sm font-medium"
                             >
                               WhatsApp Number
                             </label>
-                            <input
-                              id="safari-whatsapp"
-                              name="whatsapp"
-                              required
-                              type="tel"
-                              autoComplete="tel"
-                              placeholder="+263..."
-                              value={form.whatsapp}
-                              onChange={(event) =>
-                                setForm({ ...form, whatsapp: event.target.value })
-                              }
-                              className="w-full border border-black/10 bg-black/2.5 px-4 py-3 text-sm outline-none transition-colors placeholder:text-black/35 focus:border-black/40"
-                            />
+                            <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] gap-2">
+                              <select
+                                id="safari-phone-country"
+                                aria-label={`Country calling code, ${selectedPhoneCountry?.name ?? "Zimbabwe"}`}
+                                autoComplete="tel-country-code"
+                                value={phoneCountry}
+                                onChange={(event) =>
+                                  setPhoneCountry(event.target.value as CountryCode)
+                                }
+                                className="min-w-0 border border-black/10 bg-white px-3 py-3 text-sm outline-none focus:border-black/40"
+                              >
+                                {phoneCountries.map((country) => (
+                                  <option
+                                    key={country.code}
+                                    value={country.code}
+                                    aria-label={`${country.name} +${country.callingCode}`}
+                                  >
+                                    {getCountryFlag(country.code)} +{country.callingCode}
+                                  </option>
+                                ))}
+                              </select>
+                              <input
+                                id="safari-whatsapp"
+                                name="whatsapp"
+                                required
+                                type="tel"
+                                autoComplete="tel-national"
+                                placeholder="771 234 567"
+                                value={form.whatsapp}
+                                onChange={(event) => {
+                                  const phoneNumber = event.target.value;
+                                  setForm({ ...form, whatsapp: phoneNumber });
+
+                                  if (phoneNumber.startsWith("+")) {
+                                    const parsedNumber =
+                                      parsePhoneNumberFromString(phoneNumber);
+                                    if (parsedNumber?.country) {
+                                      setPhoneCountry(parsedNumber.country);
+                                    }
+                                  }
+                                }}
+                                className="min-w-0 w-full border border-black/10 bg-black/2.5 px-4 py-3 text-sm outline-none transition-colors placeholder:text-black/35 focus:border-black/40"
+                              />
+                            </div>
+                            <p className="mt-2 text-xs text-subtle">
+                              Country is set automatically from the selected calling code.
+                            </p>
                           </div>
                           <div>
                             <label
