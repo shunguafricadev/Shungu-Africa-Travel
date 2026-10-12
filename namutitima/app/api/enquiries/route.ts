@@ -183,6 +183,12 @@ export async function POST(request: Request) {
       ]
         .filter(Boolean)
         .join("\n");
+      const travellerMessage = [
+        duration ? `Trip duration: ${duration}` : null,
+        message,
+      ]
+        .filter(Boolean)
+        .join("\n");
       const supabase = createSupabaseServerClient();
       const { data, error } = await supabase
         .from("enquiries")
@@ -252,6 +258,7 @@ export async function POST(request: Request) {
           currency: "USD",
           firstName,
           email,
+          message: travellerMessage || null,
         });
       } catch (emailError) {
         console.error("Contact traveller confirmation email error:", emailError);

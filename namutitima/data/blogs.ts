@@ -1,4 +1,22 @@
-export const blogs = [
+export type BlogContentBlock = {
+  type: "heading" | "paragraph";
+  text: string;
+};
+
+export type Blog = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  readTime: string;
+  image: string;
+  author: string;
+  authorImage: string;
+  date: string;
+  content?: BlogContentBlock[];
+};
+
+export const blogs: Blog[] = [
   {
     slug: "victoria-falls-ready-to-welcome-travellers-again",
     title: "Victoria Falls Is Ready to Welcome Travellers Again",

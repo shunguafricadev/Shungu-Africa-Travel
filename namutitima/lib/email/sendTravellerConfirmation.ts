@@ -20,6 +20,7 @@ type TravellerConfirmationData = {
   currency: string;
   firstName: string;
   email: string;
+  message?: string | null;
 };
 
 function escapeHtml(value: unknown) {
@@ -161,6 +162,13 @@ export async function sendTravellerConfirmation(
               ? "Price on request"
               : `${escapeHtml(enquiry.currency)} ${enquiry.total.toLocaleString()}`}
           </p>
+
+          ${enquiry.message
+            ? `<h2 style="margin-top: 30px; font-size: 17px;">Your itinerary details</h2>
+              <div style="background: #f5f5f5; padding: 16px; font-size: 14px; line-height: 1.8; white-space: pre-line;">
+                ${escapeHtml(enquiry.message)}
+              </div>`
+            : ""}
 
           <h2 style="
             margin-top: 32px;

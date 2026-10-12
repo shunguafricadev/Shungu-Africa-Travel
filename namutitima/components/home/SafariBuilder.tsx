@@ -7,6 +7,7 @@ import { formatDateForInput } from "@/components/activities/booking/dateUtils";
 import Container from "@/components/ui/Container";
 import { activities } from "@/data/activities";
 import { destinations } from "@/data/destinations";
+import { getSafariComboName } from "@/lib/enquiry/safariComboName";
 
 const destinationEmojis: Record<string, string> = {
   "victoria-falls": "🌊",
@@ -163,6 +164,16 @@ export function SafariBuilder() {
   const estimateHigh = accommodationChoice
     ? accommodationChoice.highPerDay * duration + experiencePrice
     : null;
+  const selectedDestinationItems = selectedDestinations
+    .map((id) => safariDestinations.find((item) => item.id === id))
+    .filter((item) => item !== undefined);
+  const selectedExperienceItems = selectedExperiences
+    .map((id) => experienceOptions.find((item) => item.id === id))
+    .filter((item) => item !== undefined);
+  const comboName = getSafariComboName(
+    selectedDestinationItems,
+    selectedExperienceItems,
+  );
 
   function toggleSelection(
     current: string[],
@@ -204,12 +215,8 @@ export function SafariBuilder() {
     setIsSubmitting(true);
     setError("");
 
-    const destinationNames = selectedDestinations
-      .map((id) => safariDestinations.find((item) => item.id === id)?.name)
-      .filter(Boolean);
-    const experienceNames = selectedExperiences
-      .map((id) => experienceOptions.find((item) => item.id === id)?.name)
-      .filter(Boolean);
+    const destinationNames = selectedDestinationItems.map((item) => item.name);
+    const experienceNames = selectedExperienceItems.map((item) => item.name);
     const message = [
       `Destinations: ${destinationNames.join(", ")}`,
       `Accommodation budget: ${accommodationChoice?.name ?? "Not selected"}`,
@@ -228,7 +235,7 @@ export function SafariBuilder() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contact: true,
-          context: "Build Your Itinerary enquiry",
+          context: comboName,
           fullName: form.name,
           email: form.email,
           whatsapp: form.whatsapp,
@@ -364,9 +371,13 @@ export function SafariBuilder() {
                     Enquiry received.
                   </h3>
                   <p className="mt-3 max-w-xl text-sm leading-6 text-neutral-600">
-                    Thanks for getting in touch. Our team will review your
-                    enquiry and get back to you with availability and the next
-                    steps.
+                    Thanks for getting in touch. We&apos;ve received your
+                    enquiry for{" "}
+                    <span className="font-medium text-neutral-900">
+                      {comboName}
+                    </span>
+                    . Our team will review it and get back to you with
+                    availability and the next steps.
                   </p>
                   <p className="mt-6 text-sm text-neutral-500">
                     Reference: <strong className="text-foreground">{reference}</strong>

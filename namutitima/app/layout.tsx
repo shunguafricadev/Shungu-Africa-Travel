@@ -135,7 +135,7 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       className={`${quicksand.variable} ${cormorantGaramond.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col antialiased">
+      <body className="flex min-h-screen flex-col antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -155,8 +155,8 @@ export default function RootLayout({
             {children}
           </div>
 
-          <Footer />
           <OptionalThirdPartyServices />
+          <Footer />
           <CookieConsentPopup />
         </TripProvider>
       </body>

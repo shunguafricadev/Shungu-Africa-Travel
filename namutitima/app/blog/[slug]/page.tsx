@@ -74,48 +74,26 @@ export default async function BlogSlugPage({ params }: BlogSlugPageProps) {
 							<span>{blog.date}</span>
 						</div>
 
-						<div className="mt-10 space-y-6 text-base leading-8 text-neutral-700">
-							<p>
-								Victoria Falls is one of Africa&apos;s most remarkable places to
-								begin a journey. The waterfall itself is unforgettable, but the
-								wider destination offers far more to discover during a first
-								visit.
+						{blog.content?.length ? (
+							<div className="mt-10 space-y-6 text-base leading-8 text-neutral-700">
+								{blog.content.map((block, index) =>
+									block.type === "heading" ? (
+										<h2
+											key={`${blog.slug}-${index}`}
+											className="pt-5 text-3xl font-semibold tracking-tight text-neutral-900"
+										>
+											{block.text}
+										</h2>
+									) : (
+										<p key={`${blog.slug}-${index}`}>{block.text}</p>
+									),
+								)}
+							</div>
+						) : (
+							<p className="mt-10 text-base leading-8 text-neutral-700">
+								Article content is being prepared.
 							</p>
-
-							<h2 className="pt-5 text-3xl font-semibold tracking-tight text-neutral-900">
-								Start with the falls
-							</h2>
-
-							<p>
-								Give yourself enough time to experience the falls from several
-								viewpoints. The spray, changing light and different walking
-								paths make each viewpoint feel distinct, especially around
-								sunrise or late afternoon.
-							</p>
-
-							<h2 className="pt-5 text-3xl font-semibold tracking-tight text-neutral-900">
-								Make room for more than one experience
-							</h2>
-
-							<p>
-								A first visit is best enjoyed at an unhurried pace. Combine a
-								guided walk with a river experience, a wildlife outing or time
-								to explore the town. Local knowledge helps you choose the right
-								activities for the season, your interests and the time you have
-								available.
-							</p>
-
-							<h2 className="pt-5 text-3xl font-semibold tracking-tight text-neutral-900">
-								Plan with the season in mind
-							</h2>
-
-							<p>
-								Water levels, weather and wildlife sightings change throughout
-								the year. Before travelling, check what conditions to expect and
-								plan a flexible itinerary. That small amount of preparation
-								leaves more space to enjoy the destination when you arrive.
-							</p>
-						</div>
+						)}
 
 						<div className="mt-12 border-t border-neutral-200 pt-6 text-sm text-neutral-500">
 							Written by {blog.author}
