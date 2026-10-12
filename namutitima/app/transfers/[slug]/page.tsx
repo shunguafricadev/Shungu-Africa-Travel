@@ -11,6 +11,12 @@ type TransferPageProps = {
   params: Promise<{ slug: string }>;
 };
 
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return transfers.map(({ slug }) => ({ slug }));
+}
+
 export async function generateMetadata({
   params,
 }: TransferPageProps): Promise<Metadata> {

@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description:
     "Read Shungu Africa Travel's privacy policy, cookie information, photo credits and website sitemap, and manage cookie preferences.",
   alternates: { canonical: "/legal" },
+  robots: { index: false, follow: true },
   openGraph: {
     title: "Legal & Information | Shungu Africa Travel",
     description:

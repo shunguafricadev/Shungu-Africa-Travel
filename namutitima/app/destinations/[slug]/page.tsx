@@ -18,6 +18,12 @@ type DestinationPageProps = {
   params: Promise<{ slug: string }>;
 };
 
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return destinations.map(({ slug }) => ({ slug }));
+}
+
 export async function generateMetadata({
   params,
 }: DestinationPageProps): Promise<Metadata> {

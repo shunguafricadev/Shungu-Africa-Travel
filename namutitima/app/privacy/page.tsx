@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   description:
     "Read the Shungu Africa Travel privacy policy to understand how personal information is collected, used, stored and protected.",
   alternates: { canonical: "/privacy" },
+  robots: { index: false, follow: true },
   openGraph: {
     title: "Privacy Policy | Shungu Africa Travel",
     description:

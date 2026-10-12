@@ -17,13 +17,11 @@ const staticRoutes = [
   ["/blog", 0.7, "weekly"],
   ["/contact", 0.6, "monthly"],
   ["/enquire", 0.6, "monthly"],
-  ["/privacy", 0.2, "yearly"],
-  ["/legal", 0.2, "yearly"],
 ] as const;
 
 function entry(path: string, priority: number, changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]): MetadataRoute.Sitemap[number] {
   return {
-    url: new URL(path, SITE_URL).toString(),
+    url: path === "/" ? SITE_URL : new URL(path, SITE_URL).toString(),
     changeFrequency,
     priority,
   };
@@ -38,6 +36,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...destinations.map((item) => entry(`/destinations/${item.slug}`, 0.8, "monthly")),
     ...transfers.map((item) => entry(`/transfers/${item.slug}`, 0.7, "monthly")),
     ...packages.map((item) => entry(`/packages/${item.slug}`, 0.7, "monthly")),
-    ...blogs.map((item) => entry(`/blog/${item.slug}`, 0.7, "monthly")),
+    ...blogs
+      .filter((item) => item.content?.length)
+      .map((item) => entry(`/blog/${item.slug}`, 0.7, "monthly")),
   ];
 }

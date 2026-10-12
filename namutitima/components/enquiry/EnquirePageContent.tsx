@@ -273,8 +273,26 @@ export default function EnquirePageContent() {
   return (
     <Suspense
       fallback={
-        <main id="main-content" className="flex min-h-[75svh] items-center justify-center bg-white">
-          <p className="text-sm text-neutral-500">Loading your enquiry...</p>
+        <main id="main-content" className="bg-white">
+          <section className="min-h-[75svh] bg-brand text-white">
+            <Container>
+              <div className="flex min-h-[75svh] items-center justify-center px-6 py-20 text-center sm:px-8 lg:px-12">
+                <div className="w-full max-w-3xl">
+                  <p className="text-sm font-medium uppercase tracking-[0.12em] text-foreground/80">
+                    Travel enquiry
+                  </p>
+                  <h1 className="mt-3 text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
+                    Build your journey.
+                  </h1>
+                </div>
+              </div>
+            </Container>
+          </section>
+          <section className="flex min-h-40 items-center justify-center bg-white px-6 py-12">
+            <p className="text-sm text-neutral-500" role="status">
+              Loading your enquiry...
+            </p>
+          </section>
         </main>
       }
     >

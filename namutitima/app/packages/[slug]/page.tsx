@@ -22,6 +22,12 @@ type PackagePageProps = {
   }>;
 };
 
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return packages.map(({ slug }) => ({ slug }));
+}
+
 export async function generateMetadata({
   params,
 }: PackagePageProps): Promise<Metadata> {

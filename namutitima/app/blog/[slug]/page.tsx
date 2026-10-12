@@ -12,6 +12,8 @@ type BlogSlugPageProps = {
 	}>;
 };
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
 	return blogs.map((blog) => ({ slug: blog.slug }));
 }
@@ -31,10 +33,14 @@ export async function generateMetadata({
 		`Read ${blog.title.toLowerCase()} and explore travel ideas from Shungu Africa Travel.`;
 	const title = `${blog.title} | Shungu Africa Travel`;
 	const path = `/blog/${blog.slug}`;
+	const hasCompleteContent = Boolean(blog.content?.length);
 
 	return {
 		title: blog.title,
 		description,
+		...(!hasCompleteContent && {
+			robots: { index: false, follow: true },
+		}),
 		alternates: { canonical: path },
 		openGraph: {
 			type: "article",

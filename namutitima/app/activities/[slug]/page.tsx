@@ -21,6 +21,12 @@ type ActivityPageProps = {
   }>;
 };
 
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return activities.map(({ slug }) => ({ slug }));
+}
+
 export async function generateMetadata({
   params,
 }: ActivityPageProps): Promise<Metadata> {

@@ -9,7 +9,7 @@ import {
   useSyncExternalStore,
 } from "react";
 
-const heroImage = "/images/optimized/destinations/destinations-hero.webp";
+const heroImage = "/images/destinations/destinations-hero.webp";
 const heroVideo = "/videos/home/herovid-optimized.webm";
 
 function subscribeToVideoPreference(callback: () => void) {
