@@ -90,6 +90,17 @@ export default async function BlogSlugPage({ params }: BlogSlugPageProps) {
 										>
 											{block.text}
 										</h2>
+									) : block.type === "list" ? (
+										<ul
+											key={`${blog.slug}-${index}`}
+											className="list-disc space-y-2 pl-6"
+										>
+											{block.items.map((item, itemIndex) => (
+												<li key={`${blog.slug}-${index}-${itemIndex}`}>
+													{item}
+												</li>
+											))}
+										</ul>
 									) : (
 										<p key={`${blog.slug}-${index}`}>{block.text}</p>
 									),

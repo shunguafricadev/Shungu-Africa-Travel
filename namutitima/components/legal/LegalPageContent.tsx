@@ -78,9 +78,10 @@ export default function LegalPageContent() {
                 This site stores your selected trip and privacy choice in
                 browser local storage; these are not HTTP cookies. Google Maps
                 and the Elfsight WhatsApp widget are optional third-party
-                services and will not load unless you allow them. Vercel
-                Analytics and Speed Insights are also optional and remain off
-                until enabled. We do not use advertising trackers.
+                services and will not load unless you allow them. Google
+                Analytics, Vercel Analytics and Speed Insights are also
+                optional and remain off until enabled. We do not use
+                advertising trackers.
               </p>
               <CookieSettingsButton
                 className="inline-flex font-medium text-black underline underline-offset-4 transition hover:text-black/55"

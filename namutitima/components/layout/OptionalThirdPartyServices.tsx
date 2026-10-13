@@ -40,6 +40,19 @@ export function OptionalThirdPartyServices() {
     <>
       {preferences.analytics && (
         <>
+          <Script
+            id="google-analytics-loader"
+            src="https://www.googletagmanager.com/gtag/js?id=G-TYY4Z328KL"
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics-config" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){window.dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-TYY4Z328KL');
+            `}
+          </Script>
           <Analytics
             beforeSend={(event) =>
               readPrivacyPreferences().analytics ? event : null
