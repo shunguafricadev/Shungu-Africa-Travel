@@ -81,6 +81,41 @@ export function Pagination({
         >
           Previous
         </button>
+        <div className="flex items-center gap-2" aria-label="Pages">
+          {Array.from({ length: pageCount }, (_, index) => {
+            const page = index + 1;
+
+            return (
+              <a
+                key={page}
+                href={`?page=${page}`}
+                aria-current={page === currentPage ? "page" : undefined}
+                aria-label={`Page ${page}`}
+                onClick={(event) => {
+                  if (
+                    event.button !== 0 ||
+                    event.metaKey ||
+                    event.ctrlKey ||
+                    event.shiftKey ||
+                    event.altKey
+                  ) {
+                    return;
+                  }
+
+                  event.preventDefault();
+                  changePage(page);
+                }}
+                className={`min-w-8 px-2 py-2 text-center text-sm transition ${
+                  page === currentPage
+                    ? "bg-brand text-white"
+                    : "text-foreground hover:text-brand"
+                }`}
+              >
+                {page}
+              </a>
+            );
+          })}
+        </div>
         <span aria-live="polite" className="text-sm text-subtle">
           Page {currentPage} of {pageCount}
         </span>

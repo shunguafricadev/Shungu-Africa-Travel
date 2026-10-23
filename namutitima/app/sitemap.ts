@@ -16,7 +16,6 @@ const staticRoutes = [
   ["/packages", 0.8, "weekly"],
   ["/blog", 0.7, "weekly"],
   ["/contact", 0.6, "monthly"],
-  ["/enquire", 0.6, "monthly"],
 ] as const;
 
 function entry(path: string, priority: number, changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]): MetadataRoute.Sitemap[number] {
