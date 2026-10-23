@@ -105,6 +105,7 @@ export default async function DestinationPage({
 
             <DestinationItineraries
               itineraries={destinationItineraries}
+              firstVisitItinerary={destination.firstVisitItinerary}
             />
           </div>
         </Container>

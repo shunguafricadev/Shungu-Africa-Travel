@@ -26,11 +26,35 @@ export type DestinationAccommodation = {
   priceFrom?: string;
 };
 
+export type DestinationItineraryTime = {
+  time: string;
+  title: string;
+  description: string;
+  activitySlug?: string;
+};
+
+export type DestinationItineraryDay = {
+  day: string;
+  title: string;
+  description: string;
+  location?: string;
+  accommodation?: string;
+  meals?: string;
+  times?: DestinationItineraryTime[];
+};
+
 export type DestinationItinerary = {
   title: string;
   duration: string;
   description: string;
   outline: string[];
+};
+
+export type DestinationFirstVisitItinerary = {
+  title: string;
+  duration: string;
+  description: string;
+  itinerary: DestinationItineraryDay[];
 };
 
 export type DestinationFAQ = {
@@ -153,6 +177,7 @@ export type Destination = {
   };
 
   sampleItineraries: DestinationItinerary[];
+  firstVisitItinerary?: DestinationFirstVisitItinerary;
 
   destinationHighlights: {
     waterfall: string;
@@ -222,6 +247,7 @@ type DestinationOverviewData = {
     code: string;
   };
   travelTips: string[];
+  firstVisitItinerary: DestinationFirstVisitItinerary;
 };
 
 const destinationImageBySlug: Record<string, string> = {
@@ -346,6 +372,7 @@ function createOverviewDestination(
       },
     },
     sampleItineraries: [],
+    firstVisitItinerary: data.firstVisitItinerary,
     destinationHighlights: {
       waterfall: "Explore the country's distinctive natural landscapes",
       river: "Discover rivers, wetlands and coastal waterways",
@@ -490,33 +517,28 @@ const destinationEntries: Destination[] = [
 
     thingsToDo: [
       {
-        name: "Victoria Falls Tour",
-        slug: "victoria-falls-tour",
+        name: "Guided Victoria Falls Tour",
+        slug: "guided-victoria-falls-tour",
       },
-
       {
         name: "Zambezi Sunset Cruise",
         slug: "zambezi-sunset-cruise",
       },
-
       {
-        name: "White-water Rafting",
-        slug: "white-water-rafting",
+        name: "Zambezi White-Water Rafting",
+        slug: "zambezi-white-water-rafting",
       },
-
       {
-        name: "Bungee Jumping",
-        slug: "bungee-jumping",
+        name: "Victoria Falls Helicopter Scenic Flight",
+        slug: "victoria-falls-helicopter-scenic-flight",
       },
-
       {
-        name: "Victoria Falls Canopy Tour",
-        slug: "victoria-falls-canopy-tour",
+        name: "Victoria Falls Bungee Jumping",
+        slug: "victoria-falls-bungee-jumping",
       },
-
       {
-        name: "Scenic Flight",
-        slug: "victoria-falls-scenic-flight",
+        name: "Victoria Falls Gorge Swing & Zipline",
+        slug: "victoria-falls-gorge-swing-zipline",
       },
     ],
 
@@ -533,8 +555,8 @@ const destinationEntries: Destination[] = [
 
           activities: [
             {
-              name: "Victoria Falls Tour",
-              slug: "victoria-falls-tour",
+              name: "Guided Victoria Falls Tour",
+              slug: "guided-victoria-falls-tour",
             },
 
             {
@@ -552,8 +574,8 @@ const destinationEntries: Destination[] = [
 
           activities: [
             {
-              name: "Victoria Falls Tour",
-              slug: "victoria-falls-tour",
+              name: "Guided Victoria Falls Tour",
+              slug: "guided-victoria-falls-tour",
             },
 
             {
@@ -571,8 +593,8 @@ const destinationEntries: Destination[] = [
 
           activities: [
             {
-              name: "Victoria Falls Tour",
-              slug: "victoria-falls-tour",
+              name: "Guided Victoria Falls Tour",
+              slug: "guided-victoria-falls-tour",
             },
 
             {
@@ -595,8 +617,8 @@ const destinationEntries: Destination[] = [
             },
 
             {
-              name: "Victoria Falls Canopy Tour",
-              slug: "victoria-falls-canopy-tour",
+              name: "Victoria Falls Gorge Swing & Zipline",
+              slug: "victoria-falls-gorge-swing-zipline",
             },
           ],
         },
@@ -609,8 +631,8 @@ const destinationEntries: Destination[] = [
 
           activities: [
             {
-              name: "Victoria Falls Tour",
-              slug: "victoria-falls-tour",
+              name: "Guided Victoria Falls Tour",
+              slug: "guided-victoria-falls-tour",
             },
 
             {
@@ -630,8 +652,8 @@ const destinationEntries: Destination[] = [
 
         activities: [
           {
-            name: "Victoria Falls Tour",
-            slug: "victoria-falls-tour",
+            name: "Guided Victoria Falls Tour",
+            slug: "guided-victoria-falls-tour",
           },
 
           {
@@ -648,8 +670,8 @@ const destinationEntries: Destination[] = [
 
         activities: [
           {
-            name: "Victoria Falls Tour",
-            slug: "victoria-falls-tour",
+            name: "Guided Victoria Falls Tour",
+            slug: "guided-victoria-falls-tour",
           },
 
           {
@@ -658,8 +680,8 @@ const destinationEntries: Destination[] = [
           },
 
           {
-            name: "Victoria Falls Canopy Tour",
-            slug: "victoria-falls-canopy-tour",
+            name: "Victoria Falls Gorge Swing & Zipline",
+            slug: "victoria-falls-gorge-swing-zipline",
           },
         ],
       },
@@ -671,8 +693,8 @@ const destinationEntries: Destination[] = [
 
         activities: [
           {
-            name: "Victoria Falls Tour",
-            slug: "victoria-falls-tour",
+            name: "Guided Victoria Falls Tour",
+            slug: "guided-victoria-falls-tour",
           },
 
           {
@@ -681,13 +703,13 @@ const destinationEntries: Destination[] = [
           },
 
           {
-            name: "Victoria Falls Canopy Tour",
-            slug: "victoria-falls-canopy-tour",
+            name: "Victoria Falls Gorge Swing & Zipline",
+            slug: "victoria-falls-gorge-swing-zipline",
           },
 
           {
-            name: "White-water Rafting",
-            slug: "white-water-rafting",
+            name: "Zambezi White-Water Rafting",
+            slug: "zambezi-white-water-rafting",
           },
         ],
       },
@@ -893,6 +915,107 @@ const destinationEntries: Destination[] = [
       },
     ],
 
+    firstVisitItinerary: {
+      title: "Victoria Falls first visit",
+      duration: "4 days / 3 nights",
+      description:
+        "A relaxed introduction to the Falls, with time for the main rainforest walk, a river cruise and an optional adventure.",
+      itinerary: [
+        {
+          day: "Day 1",
+          title: "Arrive in Victoria Falls",
+          description:
+            "Arrive, transfer to your accommodation and take time to settle in. Keep the day light after your journey and explore the nearby town at your own pace.",
+          location: "Victoria Falls town",
+          accommodation: "Stay in or near Victoria Falls town.",
+          meals: "Meals are arranged independently unless confirmed with your accommodation.",
+          times: [
+            {
+              time: "On arrival",
+              title: "Transfer and check-in",
+              description:
+                "Arrange an airport or road transfer in advance and confirm check-in arrangements with your accommodation.",
+            },
+            {
+              time: "Late afternoon",
+              title: "Explore at leisure",
+              description:
+                "Get oriented in town, visit local shops or relax before the next day's sightseeing.",
+            },
+          ],
+        },
+        {
+          day: "Day 2",
+          title: "Discover Victoria Falls",
+          description:
+            "Spend the morning exploring the rainforest paths and viewpoints. Water levels and spray vary by season, so allow time to stop and enjoy the views.",
+          location: "Victoria Falls Rainforest, Zimbabwe",
+          meals: "Breakfast and lunch arrangements depend on your accommodation and plans.",
+          times: [
+            {
+              time: "Morning",
+              title: "Guided rainforest and Falls visit",
+              description:
+                "Walk designated paths, visit viewpoints and learn about the Falls with a local guide. Wear comfortable shoes and protect cameras from spray.",
+              activitySlug: "guided-victoria-falls-tour",
+            },
+            {
+              time: "Afternoon",
+              title: "Lunch and free time",
+              description:
+                "Return towards town for lunch and a relaxed afternoon.",
+            },
+          ],
+        },
+        {
+          day: "Day 3",
+          title: "Enjoy the Zambezi River",
+          description:
+            "Take a slower day after the Falls visit, then head out for a sunset experience on the Zambezi.",
+          location: "Victoria Falls and the Zambezi River",
+          meals: "Meals are arranged independently unless your cruise booking says otherwise.",
+          times: [
+            {
+              time: "Morning",
+              title: "Free time in Victoria Falls",
+              description:
+                "Relax, browse local craft shops or choose an optional activity that fits your interests and budget.",
+            },
+            {
+              time: "Late afternoon",
+              title: "Sunset on the Zambezi",
+              description:
+                "Join a scheduled river cruise, subject to operator availability and river conditions. Wildlife sightings are not guaranteed.",
+              activitySlug: "zambezi-sunset-cruise",
+            },
+          ],
+        },
+        {
+          day: "Day 4",
+          title: "Optional experience and departure",
+          description:
+            "If your departure time allows, choose one final experience before continuing your journey.",
+          location: "Victoria Falls",
+          meals: "Confirm breakfast and checkout arrangements with your accommodation.",
+          times: [
+            {
+              time: "Morning",
+              title: "Optional scenic or adventure activity",
+              description:
+                "Consider a scenic flight or another activity, subject to availability, safety requirements and your flight schedule.",
+              activitySlug: "victoria-falls-helicopter-scenic-flight",
+            },
+            {
+              time: "Departure",
+              title: "Transfer to your next stop",
+              description:
+                "Allow enough time for your pre-arranged airport or road transfer.",
+            },
+          ],
+        },
+      ],
+    },
+
     destinationHighlights: {
       waterfall:
         "Mosi-oa-Tunya / Victoria Falls is the defining attraction of the destination and forms part of a UNESCO World Heritage property shared by Zimbabwe and Zambia.",
@@ -995,11 +1118,12 @@ const destinationEntries: Destination[] = [
 
     relatedContent: {
       activities: [
-        "victoria-falls-tour",
+        "guided-victoria-falls-tour",
         "zambezi-sunset-cruise",
-        "white-water-rafting",
-        "bungee-jumping",
-        "victoria-falls-canopy-tour",
+        "zambezi-white-water-rafting",
+        "victoria-falls-helicopter-scenic-flight",
+        "victoria-falls-bungee-jumping",
+        "victoria-falls-gorge-swing-zipline",
       ],
 
       packages: [
@@ -1079,11 +1203,12 @@ const destinationEntries: Destination[] = [
     ],
 
     activities: [
-      "victoria-falls-tour",
+      "guided-victoria-falls-tour",
       "zambezi-sunset-cruise",
-      "white-water-rafting",
-      "bungee-jumping",
-      "victoria-falls-canopy-tour",
+      "zambezi-white-water-rafting",
+      "victoria-falls-helicopter-scenic-flight",
+      "victoria-falls-bungee-jumping",
+      "victoria-falls-gorge-swing-zipline",
     ],
 
     packages: [
@@ -1123,9 +1248,12 @@ const destinationEntries: Destination[] = [
       "Beaches, food and local culture",
     ],
     thingsToDo: [
-      { name: "Visit Table Mountain", slug: "cape-town-table-mountain" },
-      { name: "Explore the Cape Peninsula", slug: "cape-town-cape-peninsula" },
-      { name: "Discover the V&A Waterfront", slug: "cape-town-waterfront" },
+      { name: "Table Mountain Cableway Experience", slug: "table-mountain-cableway-experience" },
+      { name: "Cape Peninsula Full-Day Tour", slug: "cape-peninsula-full-day-tour" },
+      { name: "Robben Island Guided Heritage Tour", slug: "robben-island-guided-tour" },
+      { name: "Cape Town City & Bo-Kaap Cultural Tour", slug: "cape-town-city-and-bo-kaap-tour" },
+      { name: "Cape Winelands Wine Tasting Tour", slug: "cape-winelands-wine-tasting-tour" },
+      { name: "Kirstenbosch Botanical Garden Tour", slug: "kirstenbosch-botanical-garden-tour" },
     ],
     whyVisit: [
       {
@@ -1179,6 +1307,118 @@ const destinationEntries: Destination[] = [
       "Allow extra time for road journeys during peak traffic and busy holiday periods.",
       "Use reputable local transport and check current safety advice for areas you plan to visit.",
     ],
+    firstVisitItinerary: {
+      title: "Cape Town first visit",
+      duration: "5 days / 4 nights",
+      description:
+        "A first-timer's mix of mountain and city sights, a full Cape Peninsula day, heritage and time to explore at a comfortable pace.",
+      itinerary: [
+        {
+          day: "Day 1",
+          title: "Arrive and settle into Cape Town",
+          description:
+            "Arrive, transfer to your accommodation and keep the first day flexible. Explore nearby areas only if you have time and energy after your journey.",
+          location: "Cape Town",
+          accommodation: "Stay in a convenient city or waterfront base.",
+          meals: "Meals are arranged independently unless confirmed with your accommodation.",
+          times: [
+            {
+              time: "On arrival",
+              title: "Transfer and check-in",
+              description:
+                "Arrange airport transport and confirm check-in details before travel.",
+            },
+            {
+              time: "Late afternoon",
+              title: "Easy first look at the city",
+              description:
+                "Take a gentle walk around the V&A Waterfront or your neighbourhood.",
+            },
+          ],
+        },
+        {
+          day: "Day 2",
+          title: "Table Mountain and the city",
+          description:
+            "Plan your mountain visit around the weather and cableway operating status. Keep an alternative city activity in mind if conditions change.",
+          location: "Table Mountain and Cape Town",
+          meals: "Plan meals around your sightseeing schedule.",
+          times: [
+            {
+              time: "Morning",
+              title: "Visit Table Mountain",
+              description:
+                "Take the cableway or choose a suitable guided visit when weather and operations allow.",
+              activitySlug: "table-mountain-cableway-experience",
+            },
+            {
+              time: "Afternoon",
+              title: "Explore the city",
+              description:
+                "Return to the city centre for museums, local neighbourhoods or a relaxed meal.",
+            },
+          ],
+        },
+        {
+          day: "Day 3",
+          title: "Explore the Cape Peninsula",
+          description:
+            "Set aside a full day for the peninsula. Driving times, stops and access can vary, so confirm the route with your operator.",
+          location: "Cape Peninsula",
+          meals: "Confirm whether meals or stops are included with your tour.",
+          times: [
+            {
+              time: "Full day",
+              title: "Cape Peninsula excursion",
+              description:
+                "Visit coastal viewpoints and selected stops on a guided day tour.",
+              activitySlug: "cape-peninsula-full-day-tour",
+            },
+          ],
+        },
+        {
+          day: "Day 4",
+          title: "Choose a heritage experience",
+          description:
+            "Use the day for one of Cape Town's major heritage experiences. Book timed-entry activities ahead where required.",
+          location: "Cape Town",
+          meals: "Meals are arranged independently unless included in a confirmed tour.",
+          times: [
+            {
+              time: "Morning or afternoon",
+              title: "Robben Island visit",
+              description:
+                "Take a guided heritage visit, subject to ferry schedules, weather and ticket availability.",
+              activitySlug: "robben-island-guided-tour",
+            },
+            {
+              time: "Alternative",
+              title: "City and Bo-Kaap tour",
+              description:
+                "If ferry plans do not suit, explore city history and Bo-Kaap with a local guide.",
+              activitySlug: "cape-town-city-and-bo-kaap-tour",
+            },
+          ],
+        },
+        {
+          day: "Day 5",
+          title: "A relaxed final morning",
+          description:
+            "Choose a garden visit or keep the morning free, depending on your departure time.",
+          location: "Cape Town",
+          meals: "Confirm breakfast and checkout with your accommodation.",
+          times: [
+            {
+              time: "Morning",
+              title: "Visit Kirstenbosch",
+              description:
+                "Explore the botanical garden if your schedule allows, then depart for the airport.",
+              activitySlug: "kirstenbosch-botanical-garden-tour",
+            },
+          ],
+        },
+      ],
+    },
   }),
   createOverviewDestination({
     slug: "kruger-national-park",
@@ -1201,9 +1441,7 @@ const destinationEntries: Destination[] = [
       "Wildlife viewing that varies by season and location",
     ],
     thingsToDo: [
-      { name: "Join a guided game drive", slug: "kruger-guided-game-drive" },
-      { name: "Explore the park on a self-drive route", slug: "kruger-self-drive-safari" },
-      { name: "Stay at a park rest camp", slug: "kruger-rest-camp-stay" },
+      { name: "Kruger National Park Guided Game Drive", slug: "kruger-national-park-guided-game-drive" },
     ],
     whyVisit: [
       {
@@ -1251,6 +1489,92 @@ const destinationEntries: Destination[] = [
       "Check gate opening times, park rules, road conditions and current conservation fees.",
       "Keep a safe distance from wildlife and follow park and guide instructions at all times.",
     ],
+    firstVisitItinerary: {
+      title: "Kruger safari first visit",
+      duration: "4 days / 3 nights",
+      description:
+        "A manageable first safari with time to settle in, join guided wildlife drives and avoid rushing between distant park areas.",
+      itinerary: [
+        {
+          day: "Day 1",
+          title: "Travel to your Kruger base",
+          description:
+            "Travel to your confirmed park gateway or accommodation and leave time for check-in and orientation. Distances inside the region can be significant.",
+          location: "Kruger National Park area",
+          accommodation: "Choose a confirmed rest camp or lodge near your planned route.",
+          meals: "Meal availability depends on your camp or lodge.",
+          times: [
+            {
+              time: "Afternoon",
+              title: "Check in and review park arrangements",
+              description:
+                "Confirm gate times, road rules, activity meeting points and the next day's plans.",
+            },
+          ],
+        },
+        {
+          day: "Day 2",
+          title: "First guided wildlife drive",
+          description:
+            "Start with a guided game drive to learn about the park and build in time for a relaxed return to camp.",
+          location: "Kruger National Park",
+          meals: "Check which meals are provided by your accommodation or operator.",
+          times: [
+            {
+              time: "Morning or afternoon",
+              title: "Guided game drive",
+              description:
+                "Explore with a qualified guide. Wildlife sightings vary by area and season and are never guaranteed.",
+              activitySlug: "kruger-national-park-guided-game-drive",
+            },
+          ],
+        },
+        {
+          day: "Day 3",
+          title: "A full day in the park",
+          description:
+            "Spend the day exploring at a measured pace, taking breaks at permitted rest stops and following all park rules.",
+          location: "Kruger National Park",
+          meals: "Carry food and water or use approved facilities along your route.",
+          times: [
+            {
+              time: "Early morning",
+              title: "Set out for wildlife viewing",
+              description:
+                "Join another guided drive or follow a permitted self-drive route after checking current park guidance.",
+            },
+            {
+              time: "Afternoon",
+              title: "Return to camp and rest",
+              description:
+                "Allow time to return before gate closing and enjoy an evening at your accommodation.",
+            },
+          ],
+        },
+        {
+          day: "Day 4",
+          title: "Final drive and departure",
+          description:
+            "If time permits, enjoy one last morning outing before leaving through your planned gate or transfer point.",
+          location: "Kruger National Park area",
+          meals: "Confirm checkout and breakfast arrangements with your accommodation.",
+          times: [
+            {
+              time: "Morning",
+              title: "Optional final wildlife outing",
+              description:
+                "Choose a short drive only if it fits your gate schedule and onward transport.",
+            },
+            {
+              time: "Departure",
+              title: "Leave the park",
+              description:
+                "Allow a realistic buffer for the drive to your next destination or airport.",
+            },
+          ],
+        },
+      ],
+    },
   }),
   createOverviewDestination({
     slug: "sossusvlei",
@@ -1273,9 +1597,11 @@ const destinationEntries: Destination[] = [
       "Stargazing in the remote desert",
     ],
     thingsToDo: [
-      { name: "Explore the Sossusvlei dunes", slug: "sossusvlei-dune-visit" },
-      { name: "Visit Deadvlei", slug: "sossusvlei-deadvlei" },
-      { name: "Discover Sesriem Canyon", slug: "sesriem-canyon" },
+      { name: "Sossusvlei and Deadvlei Guided Desert Tour", slug: "sossusvlei-and-deadvlei-guided-tour" },
+      { name: "Dune 45 Sunrise Excursion", slug: "dune-45-sunrise-excursion" },
+      { name: "Sesriem Canyon Guided Tour", slug: "sesriem-canyon-guided-tour" },
+      { name: "Namib Desert Scenic Flight", slug: "namib-desert-scenic-flight" },
+      { name: "Sossusvlei Hot-Air Balloon Safari", slug: "sossusvlei-hot-air-balloon-safari" },
     ],
     whyVisit: [
       {
@@ -1323,6 +1649,95 @@ const destinationEntries: Destination[] = [
       "Check park access arrangements, gate times and road conditions before setting out.",
       "Carry water, sun protection and suitable footwear; desert temperatures can be extreme.",
     ],
+    firstVisitItinerary: {
+      title: "Sossusvlei first visit",
+      duration: "4 days / 3 nights",
+      description:
+        "A desert introduction with an early dune visit, time for Deadvlei and Sesriem Canyon, and realistic room for long drives and heat.",
+      itinerary: [
+        {
+          day: "Day 1",
+          title: "Arrive near Sesriem",
+          description:
+            "Travel to your booked accommodation near the park entrance. Settle in, check opening arrangements and prepare water and sun protection for an early start.",
+          location: "Sesriem",
+          accommodation: "Stay near Sesriem to reduce the early-morning drive.",
+          meals: "Meal availability depends on your accommodation.",
+          times: [
+            {
+              time: "Afternoon",
+              title: "Check in and prepare",
+              description:
+                "Confirm your transport, park access, gate schedule and any activity bookings.",
+            },
+          ],
+        },
+        {
+          day: "Day 2",
+          title: "Sunrise dunes and Deadvlei",
+          description:
+            "Start early to make the most of cooler temperatures and the morning light. Allow time for walking on sand and follow access guidance.",
+          location: "Namib-Naukluft National Park",
+          meals: "Carry water and confirm meal options before entering the park.",
+          times: [
+            {
+              time: "Sunrise",
+              title: "Dune 45 excursion",
+              description:
+                "Visit the dune early with your confirmed transport or guided operator.",
+              activitySlug: "dune-45-sunrise-excursion",
+            },
+            {
+              time: "Morning",
+              title: "Sossusvlei and Deadvlei",
+              description:
+                "Explore the pans on a guided tour and confirm the final access arrangements for your travel dates.",
+              activitySlug: "sossusvlei-and-deadvlei-guided-tour",
+            },
+          ],
+        },
+        {
+          day: "Day 3",
+          title: "Sesriem Canyon or an optional aerial experience",
+          description:
+            "Keep the day flexible for conditions and energy levels. Avoid strenuous walks during the hottest part of the day.",
+          location: "Sesriem and the Namib Desert",
+          meals: "Arrange meals and drinking water in advance.",
+          times: [
+            {
+              time: "Morning",
+              title: "Explore Sesriem Canyon",
+              description:
+                "Join a guided visit and check local conditions before walking in the canyon.",
+              activitySlug: "sesriem-canyon-guided-tour",
+            },
+            {
+              time: "Optional",
+              title: "Scenic flight or balloon safari",
+              description:
+                "Choose an optional flight only if operating and available for your dates.",
+              activitySlug: "namib-desert-scenic-flight",
+            },
+          ],
+        },
+        {
+          day: "Day 4",
+          title: "Depart the desert",
+          description:
+            "Have breakfast, check out and allow ample time for long distances and fuel stops on the onward drive.",
+          location: "Sesriem and onward route",
+          meals: "Confirm breakfast and checkout with your accommodation.",
+          times: [
+            {
+              time: "Morning",
+              title: "Onward travel",
+              description:
+                "Depart with a realistic drive plan and check road conditions before setting out.",
+            },
+          ],
+        },
+      ],
+    },
   }),
   createOverviewDestination({
     slug: "etosha-national-park",
@@ -1345,9 +1760,7 @@ const destinationEntries: Destination[] = [
       "Distinctive dry-season and green-season scenery",
     ],
     thingsToDo: [
-      { name: "Explore Etosha on a game drive", slug: "etosha-game-drive" },
-      { name: "Visit wildlife waterholes", slug: "etosha-waterholes" },
-      { name: "Discover the Etosha Pan", slug: "etosha-pan" },
+      { name: "Etosha National Park Guided Game Drive", slug: "etosha-national-park-guided-game-drive" },
     ],
     whyVisit: [
       {
@@ -1395,6 +1808,92 @@ const destinationEntries: Destination[] = [
       "Carry enough fuel and allow time for long distances between park areas.",
       "Follow park speed limits and remain in your vehicle except in designated areas.",
     ],
+    firstVisitItinerary: {
+      title: "Etosha safari first visit",
+      duration: "4 days / 3 nights",
+      description:
+        "A beginner-friendly park stay that leaves time for guided wildlife viewing, waterhole stops and the distances between overnight bases.",
+      itinerary: [
+        {
+          day: "Day 1",
+          title: "Arrive at your Etosha base",
+          description:
+            "Reach your confirmed accommodation, check park access and gate schedules, and keep the rest of the day flexible for travel delays.",
+          location: "Etosha National Park area",
+          accommodation: "Book a confirmed camp or lodge suited to your route.",
+          meals: "Meal availability depends on the selected camp or lodge.",
+          times: [
+            {
+              time: "Afternoon",
+              title: "Check in and plan your route",
+              description:
+                "Review current park rules, permitted roads and the distances between overnight stops.",
+            },
+          ],
+        },
+        {
+          day: "Day 2",
+          title: "First Etosha game drive",
+          description:
+            "Join a guided drive for an introduction to wildlife viewing and the distinctive Etosha landscape.",
+          location: "Etosha National Park",
+          meals: "Confirm meal and park-entry arrangements with your operator.",
+          times: [
+            {
+              time: "Morning or afternoon",
+              title: "Guided park game drive",
+              description:
+                "Explore with a qualified guide. Wildlife sightings vary and are never guaranteed.",
+              activitySlug: "etosha-national-park-guided-game-drive",
+            },
+          ],
+        },
+        {
+          day: "Day 3",
+          title: "Waterholes and the Etosha Pan",
+          description:
+            "Spend another day exploring permitted routes and designated viewing areas, allowing time to observe without rushing.",
+          location: "Etosha National Park",
+          meals: "Carry water and follow park guidance on where food stops are permitted.",
+          times: [
+            {
+              time: "Early morning",
+              title: "Set out after checking conditions",
+              description:
+                "Choose a route appropriate to your overnight base, gate times and current road conditions.",
+            },
+            {
+              time: "During the day",
+              title: "Pause at designated waterholes",
+              description:
+                "Observe wildlife from permitted areas and remain inside your vehicle where required.",
+            },
+          ],
+        },
+        {
+          day: "Day 4",
+          title: "Final wildlife viewing and departure",
+          description:
+            "If time permits, take a short morning drive before leaving the park through your planned gate.",
+          location: "Etosha National Park area",
+          meals: "Confirm breakfast and checkout arrangements with your accommodation.",
+          times: [
+            {
+              time: "Morning",
+              title: "Optional final drive",
+              description:
+                "Keep the route short enough to leave the park within gate hours.",
+            },
+            {
+              time: "Departure",
+              title: "Continue your Namibia journey",
+              description:
+                "Allow sufficient time for the onward road journey and fuel stops.",
+            },
+          ],
+        },
+      ],
+    },
   }),
   createOverviewDestination({
     slug: "chobe-national-park",
@@ -1417,9 +1916,9 @@ const destinationEntries: Destination[] = [
       "Wildlife viewing that varies by season and location",
     ],
     thingsToDo: [
-      { name: "Join a guided Chobe game drive", slug: "chobe-game-drive" },
-      { name: "Take a Chobe River boat safari", slug: "chobe-river-boat-safari" },
-      { name: "Explore Kasane and the Chobe region", slug: "kasane-chobe-region" },
+      { name: "Chobe National Park Full-Day Trip", slug: "chobe-full-day-trip" },
+      { name: "Chobe River Sunset Cruise", slug: "chobe-river-sunset-cruise" },
+      { name: "Chobe Wildlife Photography Safari", slug: "chobe-wildlife-photography-safari" },
     ],
     whyVisit: [
       {
@@ -1467,6 +1966,87 @@ const destinationEntries: Destination[] = [
       "Check river conditions, park rules and operator schedules before travel.",
       "If travelling across an international border, confirm current entry requirements for every traveller.",
     ],
+    firstVisitItinerary: {
+      title: "Chobe first visit",
+      duration: "4 days / 3 nights",
+      description:
+        "A gentle introduction to Kasane and Chobe, pairing a full-day park experience with time on the river.",
+      itinerary: [
+        {
+          day: "Day 1",
+          title: "Arrive in Kasane",
+          description:
+            "Transfer to your accommodation, confirm the next day's pickup and review any park or border arrangements.",
+          location: "Kasane, Botswana",
+          accommodation: "Stay in Kasane for convenient access to local operators.",
+          meals: "Meals are arranged independently unless confirmed with your accommodation.",
+          times: [
+            {
+              time: "Afternoon",
+              title: "Check in and confirm activities",
+              description:
+                "Verify pickup times, park fees, inclusions and what identification to bring.",
+            },
+          ],
+        },
+        {
+          day: "Day 2",
+          title: "Explore Chobe National Park",
+          description:
+            "Spend the day on an organised Chobe trip with a licensed operator. Wildlife viewing depends on conditions and sightings are not guaranteed.",
+          location: "Chobe National Park",
+          meals: "Check whether meals and park fees are included in the confirmed trip.",
+          times: [
+            {
+              time: "Full day",
+              title: "Guided Chobe experience",
+              description:
+                "Explore park and river areas included in your confirmed operator itinerary.",
+              activitySlug: "chobe-full-day-trip",
+            },
+          ],
+        },
+        {
+          day: "Day 3",
+          title: "Enjoy the Chobe River",
+          description:
+            "Keep the day flexible for a river experience and time to rest after the full-day outing.",
+          location: "Kasane and the Chobe River",
+          meals: "Confirm any refreshments included in your cruise booking.",
+          times: [
+            {
+              time: "Morning",
+              title: "Relax or explore Kasane",
+              description:
+                "Enjoy a slower morning and confirm the cruise departure point with your operator.",
+            },
+            {
+              time: "Late afternoon",
+              title: "Chobe River sunset cruise",
+              description:
+                "Take a scheduled cruise if available; timing and operation depend on local conditions.",
+              activitySlug: "chobe-river-sunset-cruise",
+            },
+          ],
+        },
+        {
+          day: "Day 4",
+          title: "Depart Kasane",
+          description:
+            "Continue your journey after confirming onward transfers, flight times and border requirements for your route.",
+          location: "Kasane",
+          meals: "Confirm breakfast and checkout arrangements.",
+          times: [
+            {
+              time: "Morning",
+              title: "Check out and transfer",
+              description:
+                "Use your pre-arranged transport and allow a buffer for airport or border procedures.",
+            },
+          ],
+        },
+      ],
+    },
   }),
   createOverviewDestination({
     slug: "okavango-delta",
@@ -1489,9 +2069,11 @@ const destinationEntries: Destination[] = [
       "Remote camps reached by road or light aircraft",
     ],
     thingsToDo: [
-      { name: "Take a mokoro excursion", slug: "okavango-mokoro-excursion" },
-      { name: "Explore the Delta by boat", slug: "okavango-boat-safari" },
-      { name: "Join a guided game drive", slug: "okavango-game-drive" },
+      { name: "Okavango Delta Mokoro Excursion", slug: "okavango-delta-mokoro-excursion" },
+      { name: "Okavango Delta Guided Game Drive", slug: "okavango-delta-guided-game-drive" },
+      { name: "Okavango Delta Motorboat Safari", slug: "okavango-delta-motorboat-safari" },
+      { name: "Okavango Delta Guided Walking Safari", slug: "okavango-delta-guided-walking-safari" },
+      { name: "Okavango Delta Scenic Flight", slug: "okavango-delta-scenic-flight" },
     ],
     whyVisit: [
       {
@@ -1539,6 +2121,110 @@ const destinationEntries: Destination[] = [
       "Ask operators which water-based activities are available for your dates and location.",
       "Check luggage weight limits for light aircraft transfers before packing.",
     ],
+    firstVisitItinerary: {
+      title: "Okavango Delta first safari",
+      duration: "5 days / 4 nights",
+      description:
+        "A first-time Delta stay with several nights at one camp, so you can enjoy water and land activities without losing time to repeated transfers.",
+      itinerary: [
+        {
+          day: "Day 1",
+          title: "Transfer into the Delta",
+          description:
+            "Travel to your booked camp by the confirmed road or light-aircraft transfer. Attend the camp briefing and keep the first day flexible.",
+          location: "Your confirmed Okavango Delta camp",
+          accommodation: "Stay at one camp for the duration of the safari.",
+          meals: "Confirm the camp's meal plan and transfer inclusions before booking.",
+          times: [
+            {
+              time: "On arrival",
+              title: "Camp transfer and safety briefing",
+              description:
+                "Follow the camp team's instructions for transfers, wildlife and movement around camp.",
+            },
+          ],
+        },
+        {
+          day: "Day 2",
+          title: "Explore the Delta waterways",
+          description:
+            "Experience the waterways with a local guide where water levels, location and camp operations allow.",
+          location: "Okavango Delta",
+          meals: "Meals depend on your confirmed camp package.",
+          times: [
+            {
+              time: "Morning",
+              title: "Guided mokoro excursion",
+              description:
+                "Take a guided mokoro outing if water conditions and the camp's location make it available.",
+              activitySlug: "okavango-delta-mokoro-excursion",
+            },
+            {
+              time: "Afternoon",
+              title: "Rest at camp",
+              description:
+                "Return to camp for a break during the warmer part of the day.",
+            },
+          ],
+        },
+        {
+          day: "Day 3",
+          title: "Wildlife viewing by land",
+          description:
+            "Join a guided land-based activity and follow the camp's seasonal schedule and safety advice.",
+          location: "Okavango Delta",
+          meals: "Confirm included meals and activity times with your camp.",
+          times: [
+            {
+              time: "Morning or afternoon",
+              title: "Guided game drive",
+              description:
+                "Explore available wildlife areas with a qualified guide; sightings vary naturally.",
+              activitySlug: "okavango-delta-guided-game-drive",
+            },
+          ],
+        },
+        {
+          day: "Day 4",
+          title: "Choose another guided activity",
+          description:
+            "Use your final full day for another activity offered by your camp and suitable for the season.",
+          location: "Okavango Delta",
+          meals: "Meals depend on your confirmed camp package.",
+          times: [
+            {
+              time: "Morning",
+              title: "Optional walking or motorboat safari",
+              description:
+                "Ask your camp which guided activities are available and suitable for your dates.",
+              activitySlug: "okavango-delta-guided-walking-safari",
+            },
+            {
+              time: "Afternoon",
+              title: "Relax and enjoy camp",
+              description:
+                "Leave time to rest, enjoy the setting and prepare for your transfer the following day.",
+            },
+          ],
+        },
+        {
+          day: "Day 5",
+          title: "Depart the Delta",
+          description:
+            "Take a final activity if the schedule allows, then leave using your pre-arranged onward transfer.",
+          location: "Okavango Delta",
+          meals: "Confirm breakfast and transfer details with your camp.",
+          times: [
+            {
+              time: "Morning",
+              title: "Transfer to your next destination",
+              description:
+                "Check light-aircraft luggage limits or road transfer timing before departure.",
+            },
+          ],
+        },
+      ],
+    },
   }),
   createOverviewDestination({
     slug: "swakopmund",
@@ -1561,9 +2247,9 @@ const destinationEntries: Destination[] = [
       "Day trips to Walvis Bay and nearby dunes",
     ],
     thingsToDo: [
-      { name: "Explore Swakopmund's historic centre", slug: "swakopmund-town-visit" },
-      { name: "Visit the Walvis Bay lagoon", slug: "walvis-bay-lagoon" },
-      { name: "Discover the surrounding desert", slug: "swakopmund-desert-experience" },
+      { name: "Swakopmund Living Desert Tour", slug: "swakopmund-desert-living-tour" },
+      { name: "Walvis Bay Dolphin & Seal Cruise", slug: "walvis-bay-dolphin-and-seal-cruise" },
+      { name: "Sandwich Harbour 4x4 Excursion", slug: "sandwich-harbour-4x4-excursion" },
     ],
     whyVisit: [
       {
@@ -1611,6 +2297,94 @@ const destinationEntries: Destination[] = [
       "Book popular activities in advance and check operator weather policies.",
       "Plan fuel and road stops for onward journeys through remote desert areas.",
     ],
+    firstVisitItinerary: {
+      title: "Swakopmund first visit",
+      duration: "4 days / 3 nights",
+      description:
+        "A relaxed coastal stay with a guided desert experience, a marine cruise and a day for the dunes around Sandwich Harbour.",
+      itinerary: [
+        {
+          day: "Day 1",
+          title: "Arrive in Swakopmund",
+          description:
+            "Check in and ease into your coastal stay. The Atlantic climate can feel cool and windy, so keep a warm layer handy.",
+          location: "Swakopmund",
+          accommodation: "Stay in Swakopmund for access to town and coastal operators.",
+          meals: "Meals are arranged independently unless confirmed with your accommodation.",
+          times: [
+            {
+              time: "Afternoon",
+              title: "Explore the town at leisure",
+              description:
+                "Walk around the town centre and waterfront, or rest after your journey.",
+            },
+          ],
+        },
+        {
+          day: "Day 2",
+          title: "Discover the desert environment",
+          description:
+            "Join a guided excursion to learn about the desert landscape and its small wildlife.",
+          location: "Swakopmund and surrounding Namib Desert",
+          meals: "Confirm pickup and meal arrangements with your operator.",
+          times: [
+            {
+              time: "Morning",
+              title: "Guided Living Desert tour",
+              description:
+                "Explore the desert with a knowledgeable local guide.",
+              activitySlug: "swakopmund-desert-living-tour",
+            },
+            {
+              time: "Afternoon",
+              title: "Free time in town",
+              description:
+                "Return to Swakopmund and enjoy an unhurried afternoon.",
+            },
+          ],
+        },
+        {
+          day: "Day 3",
+          title: "Explore the coast and dunes",
+          description:
+            "Choose a marine cruise or a guided 4x4 trip. Confirm departure times and weather policies, as conditions can affect both activities.",
+          location: "Walvis Bay and the coast",
+          meals: "Check whether refreshments are included in your selected excursion.",
+          times: [
+            {
+              time: "Morning",
+              title: "Dolphin and seal cruise",
+              description:
+                "Cruise the bay with a local operator; wildlife sightings depend on conditions.",
+              activitySlug: "walvis-bay-dolphin-and-seal-cruise",
+            },
+            {
+              time: "Alternative",
+              title: "Sandwich Harbour 4x4 excursion",
+              description:
+                "Choose a guided dunes excursion if it better suits your interests and schedule.",
+              activitySlug: "sandwich-harbour-4x4-excursion",
+            },
+          ],
+        },
+        {
+          day: "Day 4",
+          title: "Continue your Namibia journey",
+          description:
+            "Have breakfast, check out and allow time for onward road travel.",
+          location: "Swakopmund",
+          meals: "Confirm breakfast and checkout with your accommodation.",
+          times: [
+            {
+              time: "Morning",
+              title: "Departure",
+              description:
+                "Check road conditions, fuel stops and driving distances before setting out.",
+            },
+          ],
+        },
+      ],
+    },
   }),
   createOverviewDestination({
     slug: "hwange-national-park",
@@ -1634,8 +2408,6 @@ const destinationEntries: Destination[] = [
     ],
     thingsToDo: [
       { name: "Join a guided Hwange game drive", slug: "hwange-game-drive" },
-      { name: "Explore the park's waterholes", slug: "hwange-waterholes" },
-      { name: "Stay at a Hwange safari camp", slug: "hwange-safari-camp" },
     ],
     whyVisit: [
       {
@@ -1683,6 +2455,92 @@ const destinationEntries: Destination[] = [
       "Check park access, seasonal road conditions and activity schedules.",
       "Follow guide instructions and keep a safe distance from wildlife.",
     ],
+    firstVisitItinerary: {
+      title: "Hwange safari first visit",
+      duration: "4 days / 3 nights",
+      description:
+        "A starter safari with time to reach your lodge, join guided game drives and enjoy the bush without changing camps every night.",
+      itinerary: [
+        {
+          day: "Day 1",
+          title: "Travel to your Hwange camp",
+          description:
+            "Reach your confirmed lodge or camp and settle in. Transfer distances can be long, so avoid scheduling a fixed activity too soon after arrival.",
+          location: "Hwange National Park area",
+          accommodation: "Stay at your confirmed lodge or safari camp.",
+          meals: "Confirm the camp's meal plan and transfer inclusions.",
+          times: [
+            {
+              time: "Afternoon",
+              title: "Arrive and settle in",
+              description:
+                "Review camp arrangements and receive any wildlife and safety briefing.",
+            },
+          ],
+        },
+        {
+          day: "Day 2",
+          title: "First guided game drive",
+          description:
+            "Join a guided drive and learn about the park's habitats and wildlife. Sightings are not guaranteed.",
+          location: "Hwange National Park",
+          meals: "Meal arrangements depend on your accommodation and booking.",
+          times: [
+            {
+              time: "Morning or afternoon",
+              title: "Hwange game drive",
+              description:
+                "Explore with a qualified guide, subject to camp schedule and park conditions.",
+              activitySlug: "hwange-game-drive",
+            },
+          ],
+        },
+        {
+          day: "Day 3",
+          title: "A full day in the bush",
+          description:
+            "Enjoy the camp's planned wildlife activities with time to rest between drives.",
+          location: "Hwange National Park",
+          meals: "Confirm included meals and activity times with your camp.",
+          times: [
+            {
+              time: "Early morning",
+              title: "Morning wildlife viewing",
+              description:
+                "Set out with your guide when conditions are suitable.",
+            },
+            {
+              time: "Afternoon",
+              title: "Rest and optional afternoon drive",
+              description:
+                "Follow the camp schedule and take an optional second drive if available.",
+            },
+          ],
+        },
+        {
+          day: "Day 4",
+          title: "Final activity and departure",
+          description:
+            "Take a final short activity if available, then depart using your pre-arranged road or air transfer.",
+          location: "Hwange National Park area",
+          meals: "Confirm breakfast, checkout and transfer arrangements.",
+          times: [
+            {
+              time: "Morning",
+              title: "Optional final game drive",
+              description:
+                "Choose this only if it fits your transfer schedule.",
+            },
+            {
+              time: "Departure",
+              title: "Transfer to your next stop",
+              description:
+                "Allow time for the park exit and onward journey.",
+            },
+          ],
+        },
+      ],
+    },
   }),
   createOverviewDestination({
     slug: "great-zimbabwe",
@@ -1705,9 +2563,7 @@ const destinationEntries: Destination[] = [
       "Guided interpretation of the site and its history",
     ],
     thingsToDo: [
-      { name: "Take a guided Great Zimbabwe tour", slug: "great-zimbabwe-guided-tour" },
-      { name: "Explore the Great Enclosure", slug: "great-zimbabwe-enclosure" },
-      { name: "Visit the site museum", slug: "great-zimbabwe-museum" },
+      { name: "Great Zimbabwe Guided Heritage Tour", slug: "great-zimbabwe-guided-tour" },
     ],
     whyVisit: [
       {
@@ -1755,6 +2611,76 @@ const destinationEntries: Destination[] = [
       "Wear comfortable walking shoes and bring sun protection and drinking water.",
       "Do not climb on, touch or remove material from the historic structures.",
     ],
+    firstVisitItinerary: {
+      title: "Great Zimbabwe first visit",
+      duration: "3 days / 2 nights",
+      description:
+        "A short heritage-focused stay with enough time to explore the archaeological site at a comfortable pace and avoid rushing the road journey.",
+      itinerary: [
+        {
+          day: "Day 1",
+          title: "Arrive in Masvingo",
+          description:
+            "Travel to Masvingo and settle into your accommodation. Confirm site hours, entry details and guide availability for the next day.",
+          location: "Masvingo",
+          accommodation: "Stay in Masvingo or near the Great Zimbabwe site.",
+          meals: "Meals are arranged independently unless confirmed with your accommodation.",
+          times: [
+            {
+              time: "Afternoon",
+              title: "Check in and prepare",
+              description:
+                "Plan transport to the site and bring comfortable walking shoes, sun protection and drinking water.",
+            },
+          ],
+        },
+        {
+          day: "Day 2",
+          title: "Explore Great Zimbabwe",
+          description:
+            "Spend the day exploring the historic stone city with a qualified guide. Follow site rules and allow time for the walking route.",
+          location: "Great Zimbabwe National Monument",
+          meals: "Confirm meal options and opening hours before your visit.",
+          times: [
+            {
+              time: "Morning",
+              title: "Guided heritage tour",
+              description:
+                "Learn about the site's archaeology, history and cultural significance.",
+              activitySlug: "great-zimbabwe-guided-tour",
+            },
+            {
+              time: "Afternoon",
+              title: "Continue exploring the site",
+              description:
+                "Visit accessible areas at a comfortable pace, respecting conservation guidance.",
+            },
+          ],
+        },
+        {
+          day: "Day 3",
+          title: "Final visit and onward travel",
+          description:
+            "Use the morning for anything you missed, then continue your journey with realistic road travel time.",
+          location: "Great Zimbabwe and Masvingo",
+          meals: "Confirm breakfast and checkout arrangements.",
+          times: [
+            {
+              time: "Morning",
+              title: "Optional return to the site",
+              description:
+                "Revisit an area or enjoy a relaxed morning, depending on your departure plans.",
+            },
+            {
+              time: "Departure",
+              title: "Continue your Zimbabwe itinerary",
+              description:
+                "Allow adequate time for onward road travel.",
+            },
+          ],
+        },
+      ],
+    },
   }),
   createOverviewDestination({
     slug: "matobo-hills",
@@ -1777,9 +2703,7 @@ const destinationEntries: Destination[] = [
       "Wildlife experiences in protected areas",
     ],
     thingsToDo: [
-      { name: "Take a guided Matobo Hills tour", slug: "matobo-hills-guided-tour" },
-      { name: "Visit scenic granite viewpoints", slug: "matobo-hills-viewpoints" },
-      { name: "Explore local heritage sites", slug: "matobo-heritage-sites" },
+      { name: "Matobo Hills Guided Heritage & Nature Tour", slug: "matobo-hills-guided-tour" },
     ],
     whyVisit: [
       {
@@ -1827,6 +2751,70 @@ const destinationEntries: Destination[] = [
       "Wear sturdy footwear and bring sun protection for outdoor excursions.",
       "Check access rules for protected areas and heritage sites before departure.",
     ],
+    firstVisitItinerary: {
+      title: "Matobo Hills first visit",
+      duration: "3 days / 2 nights",
+      description:
+        "A beginner-friendly visit based near Bulawayo, with a guided day among the granite scenery and cultural sites.",
+      itinerary: [
+        {
+          day: "Day 1",
+          title: "Arrive in Bulawayo",
+          description:
+            "Check in and confirm transport, park access and guide arrangements before your day in the hills.",
+          location: "Bulawayo",
+          accommodation: "Stay in Bulawayo or at confirmed accommodation near Matobo.",
+          meals: "Meals are arranged independently unless confirmed with your accommodation.",
+          times: [
+            {
+              time: "Afternoon",
+              title: "Prepare for your excursion",
+              description:
+                "Check the next day's pickup, walking conditions and any cultural-site requirements.",
+            },
+          ],
+        },
+        {
+          day: "Day 2",
+          title: "Discover Matobo Hills",
+          description:
+            "Explore the granite landscape and heritage sites with a qualified local guide. Follow access rules and allow time for walks.",
+          location: "Matobo Hills",
+          meals: "Confirm whether meals or refreshments are included with your tour.",
+          times: [
+            {
+              time: "Full day",
+              title: "Guided heritage and nature tour",
+              description:
+                "Visit selected viewpoints and cultural or natural sites according to access and your confirmed tour.",
+              activitySlug: "matobo-hills-guided-tour",
+            },
+          ],
+        },
+        {
+          day: "Day 3",
+          title: "Relaxed morning and departure",
+          description:
+            "Enjoy a slow morning or a short additional visit only if access and transport allow, then depart.",
+          location: "Matobo Hills and Bulawayo",
+          meals: "Confirm breakfast and checkout with your accommodation.",
+          times: [
+            {
+              time: "Morning",
+              title: "Optional scenic stop",
+              description:
+                "Ask your guide about an additional stop that fits your schedule and site access conditions.",
+            },
+            {
+              time: "Departure",
+              title: "Continue your journey",
+              description:
+                "Allow enough time to return to Bulawayo or your next destination.",
+            },
+          ],
+        },
+      ],
+    },
   }),
   createOverviewDestination({
     slug: "lake-kariba",
@@ -1849,9 +2837,7 @@ const destinationEntries: Destination[] = [
       "Birdlife and changing shoreline scenery",
     ],
     thingsToDo: [
-      { name: "Take a Lake Kariba boat cruise", slug: "lake-kariba-boat-cruise" },
-      { name: "Arrange a houseboat stay", slug: "lake-kariba-houseboat-stay" },
-      { name: "Explore Kariba town and viewpoints", slug: "kariba-town-visit" },
+      { name: "Lake Kariba Scenic Boat Cruise", slug: "lake-kariba-boat-cruise" },
     ],
     whyVisit: [
       {
@@ -1899,6 +2885,86 @@ const destinationEntries: Destination[] = [
       "Check vessel safety equipment, weather policy and the operator's cancellation terms.",
       "Bring sun protection and suitable layers for time spent on the water.",
     ],
+    firstVisitItinerary: {
+      title: "Lake Kariba first visit",
+      duration: "4 days / 3 nights",
+      description:
+        "A slow-paced lakeside stay with a confirmed boat cruise and flexible time for relaxing by the water.",
+      itinerary: [
+        {
+          day: "Day 1",
+          title: "Arrive in Kariba",
+          description:
+            "Travel to Kariba, check in and confirm your cruise departure point, transfers and weather arrangements.",
+          location: "Kariba",
+          accommodation: "Stay at confirmed lakeside or town accommodation.",
+          meals: "Meals are arranged independently unless included in your accommodation booking.",
+          times: [
+            {
+              time: "Afternoon",
+              title: "Settle in by the lake",
+              description:
+                "Enjoy a relaxed first afternoon and check the next day's activity details.",
+            },
+          ],
+        },
+        {
+          day: "Day 2",
+          title: "Take a scenic Lake Kariba cruise",
+          description:
+            "Enjoy the lake from the water with a confirmed operator. Cruise timings and routes depend on vessel availability and conditions.",
+          location: "Lake Kariba",
+          meals: "Check what refreshments are included with the cruise.",
+          times: [
+            {
+              time: "Morning or afternoon",
+              title: "Scenic boat cruise",
+              description:
+                "Take a scheduled or private cruise after confirming the harbour, safety arrangements and weather policy.",
+              activitySlug: "lake-kariba-boat-cruise",
+            },
+          ],
+        },
+        {
+          day: "Day 3",
+          title: "A flexible lakeside day",
+          description:
+            "Keep plans flexible for a second confirmed activity, time at your accommodation or a change caused by weather.",
+          location: "Kariba and Lake Kariba",
+          meals: "Arrange meals in Kariba or confirm the options at your accommodation.",
+          times: [
+            {
+              time: "Morning",
+              title: "Optional lake activity",
+              description:
+                "Ask your operator about available activities and confirm all safety and transfer details.",
+            },
+            {
+              time: "Afternoon",
+              title: "Relax and enjoy the shoreline",
+              description:
+                "Spend time at your accommodation and prepare for departure.",
+            },
+          ],
+        },
+        {
+          day: "Day 4",
+          title: "Depart Kariba",
+          description:
+            "Check out and continue your trip using transport arranged in advance.",
+          location: "Kariba",
+          meals: "Confirm breakfast and checkout arrangements.",
+          times: [
+            {
+              time: "Morning",
+              title: "Onward transfer",
+              description:
+                "Allow time for the road journey or airport transfer and confirm current conditions.",
+            },
+          ],
+        },
+      ],
+    },
   }),
   createOverviewDestination({
     slug: "mana-pools-national-park",
@@ -1921,9 +2987,7 @@ const destinationEntries: Destination[] = [
       "Remote wilderness camps and wildlife viewing",
     ],
     thingsToDo: [
-      { name: "Join a guided Mana Pools walking safari", slug: "mana-pools-walking-safari" },
-      { name: "Take a guided canoe safari", slug: "mana-pools-canoe-safari" },
-      { name: "Explore the Zambezi floodplain", slug: "mana-pools-zambezi-floodplain" },
+      { name: "Mana Pools Walking & Canoe Safari", slug: "mana-pools-walking-canoe-safari" },
     ],
     whyVisit: [
       {
@@ -1971,6 +3035,109 @@ const destinationEntries: Destination[] = [
       "Use qualified guides for walking and canoe activities and follow their safety instructions.",
       "Confirm seasonal opening dates, road conditions and required permits before travel.",
     ],
+    firstVisitItinerary: {
+      title: "Mana Pools first safari",
+      duration: "5 days / 4 nights",
+      description:
+        "A first-time remote safari with several nights at one camp and guided activities arranged around park access, water levels and safety conditions.",
+      itinerary: [
+        {
+          day: "Day 1",
+          title: "Travel to Mana Pools",
+          description:
+            "Reach your confirmed camp using the arranged transfer. Access can be remote and seasonal, so follow your operator's instructions.",
+          location: "Mana Pools National Park",
+          accommodation: "Stay at your confirmed safari camp.",
+          meals: "Confirm the camp meal plan, park access and transfer inclusions.",
+          times: [
+            {
+              time: "On arrival",
+              title: "Camp check-in and safety briefing",
+              description:
+                "Review camp rules, wildlife safety and the activity plan with your guides.",
+            },
+          ],
+        },
+        {
+          day: "Day 2",
+          title: "Guided walking safari",
+          description:
+            "Explore on foot only with a qualified guide and where park rules and conditions permit.",
+          location: "Mana Pools National Park",
+          meals: "Meals depend on the confirmed camp booking.",
+          times: [
+            {
+              time: "Morning",
+              title: "Walking and wildlife interpretation",
+              description:
+                "Follow your guide's safety instructions throughout the walk.",
+              activitySlug: "mana-pools-walking-canoe-safari",
+            },
+            {
+              time: "Afternoon",
+              title: "Rest at camp",
+              description:
+                "Return to camp and follow staff guidance about moving around the area.",
+            },
+          ],
+        },
+        {
+          day: "Day 3",
+          title: "Explore the Zambezi by canoe",
+          description:
+            "Take a canoe outing only with a qualified operator and when water levels and safety conditions are suitable.",
+          location: "Zambezi River, Mana Pools",
+          meals: "Confirm activity timing and meals with your operator.",
+          times: [
+            {
+              time: "Morning or afternoon",
+              title: "Guided canoe safari",
+              description:
+                "The operator confirms the route and whether conditions are appropriate for your travel dates.",
+              activitySlug: "mana-pools-walking-canoe-safari",
+            },
+          ],
+        },
+        {
+          day: "Day 4",
+          title: "A flexible safari day",
+          description:
+            "Choose another guided activity or enjoy a slower camp day, following local guidance and seasonal availability.",
+          location: "Mana Pools National Park",
+          meals: "Meals depend on the confirmed camp booking.",
+          times: [
+            {
+              time: "Morning",
+              title: "Optional guided wildlife activity",
+              description:
+                "Ask your guide about suitable activities for current park, river and wildlife conditions.",
+            },
+            {
+              time: "Afternoon",
+              title: "Relax at camp",
+              description:
+                "Enjoy the setting and prepare for your transfer the following day.",
+            },
+          ],
+        },
+        {
+          day: "Day 5",
+          title: "Depart Mana Pools",
+          description:
+            "Leave with your pre-arranged transfer and allow extra time for remote-area logistics.",
+          location: "Mana Pools National Park",
+          meals: "Confirm breakfast and departure timing with your camp.",
+          times: [
+            {
+              time: "Morning",
+              title: "Onward transfer",
+              description:
+                "Follow the camp team's instructions and reconfirm the transfer before departure.",
+            },
+          ],
+        },
+      ],
+    },
   }),
 ];
 

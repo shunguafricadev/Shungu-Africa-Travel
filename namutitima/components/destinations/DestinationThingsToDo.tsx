@@ -13,7 +13,16 @@ type DestinationThingsToDoProps = {
 export default function DestinationThingsToDo({
   items,
 }: DestinationThingsToDoProps) {
-  if (!items?.length) {
+  const linkedActivities = items
+    .flatMap((item) => {
+      const activity = activities.find(
+        (activityItem) => activityItem.slug === item.slug,
+      );
+      return activity ? [activity] : [];
+    })
+    .slice(0, 6);
+
+  if (linkedActivities.length === 0) {
     return null;
   }
 
@@ -23,25 +32,17 @@ export default function DestinationThingsToDo({
         Experiences
       </ExperienceSectionSubHeading>
 
-      <ExperienceSectionHeading>
-        Things to do
-      </ExperienceSectionHeading>
+      <ExperienceSectionHeading>Top activities</ExperienceSectionHeading>
 
       <div className="mt-8 space-y-5">
-        {items.map((item) => (
-          <article key={item.slug}>
-            {activities.some((activity) => activity.slug === item.slug) ? (
-              <Link
-                href={`/activities/${item.slug}`}
-                className="text-sm font-medium text-neutral-600 underline decoration-neutral-300 underline-offset-4 transition-colors hover:decoration-neutral-900"
-              >
-                {item.name}
-              </Link>
-            ) : (
-              <p className="text-sm font-medium text-neutral-600">
-                {item.name}
-              </p>
-            )}
+        {linkedActivities.map((activity) => (
+          <article key={activity.slug}>
+            <Link
+              href={`/activities/${activity.slug}`}
+              className="text-sm font-medium text-neutral-600 underline decoration-neutral-300 underline-offset-4 transition-colors hover:decoration-neutral-900"
+            >
+              {activity.name}
+            </Link>
           </article>
         ))}
       </div>
